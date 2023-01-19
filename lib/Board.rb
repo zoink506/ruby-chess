@@ -1,5 +1,6 @@
 require_relative './Piece.rb'
 require_relative './Converter.rb'
+require_relative './Move.rb'
 require 'colorize'
 
 class Board
@@ -68,6 +69,9 @@ class Board
   end
 
   def move_piece(position1, position2)
+    position1 = convert_board_to_arrays(position1)
+    position2 = convert_board_to_arrays(position2)
 
+    
   end
 end

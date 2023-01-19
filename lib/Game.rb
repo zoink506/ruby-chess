@@ -10,6 +10,8 @@ class Game
     @board = Board.new
     @player = Player.new
     @computer = Computer.new
+    @turn = @player
+    @move_history = []
   end
 
   def play 
@@ -33,7 +35,12 @@ class Game
     #     First piece can only be a friendly piece
     #     Second piece can only be a piece in its moves list
 
-
     @board.print_board
+    #first_piece = @player.player_input
+    #second_piece = @player.player_input
+    p convert_arrays_to_board([6, 5])
+    p convert_board_to_arrays('h6')
+
+    @turn == @player ? @turn = @computer : @turn = @player
   end
 end
