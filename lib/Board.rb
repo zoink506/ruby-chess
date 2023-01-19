@@ -71,7 +71,23 @@ class Board
   def move_piece(position1, position2)
     position1 = convert_board_to_arrays(position1)
     position2 = convert_board_to_arrays(position2)
+    # from = @board[position1[0]][position1[1]]
+    # to = @board[position2[0]][position2[1]]
 
-    
+    @board[position1[0]][position1[1]]
+    @board[position2[0]][position2[1]] = @board[position1[0]][position1[1]]
+    @board[position1[0]][position1[1]] = 0
+    Move.new(position1, position2)
+  end
+
+  def update_moves
+    @board.each do |row|
+      row.each do |square|
+        if square != 0
+          square.update_possible_moves(self)
+        end
+      end
+    end
+
   end
 end

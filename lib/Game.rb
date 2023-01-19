@@ -17,6 +17,10 @@ class Game
   def play 
     # Loop .round until checkmate or stalemate is declared
     round
+    round
+    round
+    round
+    round
   end
 
   def round
@@ -35,11 +39,13 @@ class Game
     #     First piece can only be a friendly piece
     #     Second piece can only be a piece in its moves list
 
+    @board.update_moves
     @board.print_board
-    #first_piece = @player.player_input
-    #second_piece = @player.player_input
-    p convert_arrays_to_board([6, 5])
-    p convert_board_to_arrays('h6')
+    first_piece = @player.player_input("Select the piece you wish to move")
+    second_piece = @player.player_input("Select the destination square")
+    move = @board.move_piece(first_piece, second_piece)
+    @move_history << move
+    p @move_history
 
     @turn == @player ? @turn = @computer : @turn = @player
   end

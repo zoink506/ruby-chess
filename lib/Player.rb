@@ -1,5 +1,6 @@
 class Player
-  def player_input
+  def player_input(prompt)
+    puts prompt
     loop do
       input = gets.chomp
       return input if validate_input(input) == true
