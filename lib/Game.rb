@@ -24,20 +24,9 @@ class Game
   end
 
   def round
-    # Update where the pieces can move
-    #   Piece cannot move if moving results in check
-    #
-    # Gather all the spots the pieces can move
-    # Use the list to determine whether the king is in check
-    #   Go through every piece and move the piece to every possible location
-    #   Test if the king is still in check after every move
-    #   If the king doesn't leave check after at least one move, it is checkmate
+    # Loop through every piece
+    # Update where it can move (pseudo-legal moves)
     # 
-    # If not checkmate, check who's turn it is
-    #   If it is the player's turn,
-    #     Get input from the player
-    #     First piece can only be a friendly piece
-    #     Second piece can only be a piece in its moves list
 
     @board.update_moves
     @board.print_board

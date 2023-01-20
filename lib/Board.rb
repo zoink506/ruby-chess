@@ -5,6 +5,7 @@ require 'colorize'
 
 class Board
   include Converter
+  attr_accessor :board
 
   def initialize
     @board = []
@@ -15,28 +16,28 @@ class Board
       end
     end
 
-    @board[0][0] = Rook.new(:red)
-    @board[0][1] = Knight.new(:red)
-    @board[0][2] = Bishop.new(:red)
-    @board[0][3] = Queen.new(:red)
-    @board[0][4] = King.new(:red)
-    @board[0][5] = Bishop.new(:red)
-    @board[0][6] = Knight.new(:red)
-    @board[0][7] = Rook.new(:red)
+    @board[0][0] = Rook.new(:red, [0,0])
+    @board[0][1] = Knight.new(:red, [0,1])
+    @board[0][2] = Bishop.new(:red, [0,2])
+    @board[0][3] = Queen.new(:red, [0,3])
+    @board[0][4] = King.new(:red, [0,4])
+    @board[0][5] = Bishop.new(:red, [0,5])
+    @board[0][6] = Knight.new(:red, [0,6])
+    @board[0][7] = Rook.new(:red, [0,7])
     for i in 0..7 do
-      @board[1][i] = Pawn.new(:red)
+      @board[1][i] = Pawn.new(:red, [1,i])
     end
 
-    @board[7][0] = Rook.new(:blue)
-    @board[7][1] = Knight.new(:blue)
-    @board[7][2] = Bishop.new(:blue)
-    @board[7][3] = Queen.new(:blue)
-    @board[7][4] = King.new(:blue)
-    @board[7][5] = Bishop.new(:blue)
-    @board[7][6] = Knight.new(:blue)
-    @board[7][7] = Rook.new(:blue)
+    @board[7][0] = Rook.new(:blue, [7,0])
+    @board[7][1] = Knight.new(:blue, [7,1])
+    @board[7][2] = Bishop.new(:blue, [7,2])
+    @board[7][3] = Queen.new(:blue, [7,3])
+    @board[7][4] = King.new(:blue, [7,4])
+    @board[7][5] = Bishop.new(:blue, [7,5])
+    @board[7][6] = Knight.new(:blue, [7,6])
+    @board[7][7] = Rook.new(:blue, [7,7])
     for i in 0..7 do
-      @board[6][i] = Pawn.new(:blue)
+      @board[6][i] = Pawn.new(:blue, [6,i])
     end
 
   end
@@ -74,20 +75,34 @@ class Board
     # from = @board[position1[0]][position1[1]]
     # to = @board[position2[0]][position2[1]]
 
-    @board[position1[0]][position1[1]]
-    @board[position2[0]][position2[1]] = @board[position1[0]][position1[1]]
-    @board[position1[0]][position1[1]] = 0
-    Move.new(position1, position2)
+    piece = @board[position1[0]][position1[1]]
+    @board[position2[0]][position2[1]] = @board[position1[0]][position1[1]] # new position
+    @board[position1[0]][position1[1]] = 0 # old position
+    @board[position2[0]][position2[1]].position = position2
+
+    Move.new(position1, position2, piece)
   end
 
   def update_moves
-    @board.each do |row|
-      row.each do |square|
+    red_controlled_squares = []
+    blue_controlled_squares = []
+    all_moves = []
+
+    @board.each_with_index do |row, i|
+      row.each_with_index do |square, j|
         if square != 0
-          square.update_possible_moves(self)
+          moves_controlled_by_piece = square.update_possible_moves(self)
+          p "#{i}-#{j}: #{moves_controlled_by_piece}"
         end
       end
     end
 
+    @board.each do |row|
+      row.each do |square|
+        if square != 0
+          square.log_cell
+        end
+      end
+    end
   end
 end
