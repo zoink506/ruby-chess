@@ -97,6 +97,10 @@ class Board
       end
     end
 
+    log_cells()
+  end
+
+  def log_cells
     @board.each do |row|
       row.each do |square|
         if square != 0

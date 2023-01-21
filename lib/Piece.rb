@@ -247,65 +247,88 @@ class Knight < Piece
 
     if (row - 2 >= 0) && (column - 1 >= 0)
       top_left = board.board[row - 2][column - 1]
-      moves_available << Move.new(@position, [row - 2, column - 1], self)
-      controlled_squares << [row - 2, column - 1]
+
+      if top_left == 0 || (top_left != 0 && top_left.color != @color)
+        moves_available << Move.new(@position, [row - 2, column - 1], self)
+        controlled_squares << [row - 2, column - 1]
+      end
     end
-    # DO THIS TO ALL OTHER IFs BELOW
-    # CHECK FOR COLOR OF PIECE BEFORE ADDING TO MOVES LIST
 
     #top_right = board.board[row - 2][column + 1] if (row - 2 >= 0) && (column + 1 <= board.board[0].length - 1)
     if (row - 2 >= 0) && (column + 1 <= board.board[0].length - 1)
       top_right = board.board[row - 2][column + 1]
-      moves_available << Move.new(@position, [row - 2, column + 1], self)
-      controlled_squares << [row - 2, column + 1]
+
+      if top_right == 0 || (top_right != 0 && top_right.color != @color)
+        moves_available << Move.new(@position, [row - 2, column + 1], self)
+        controlled_squares << [row - 2, column + 1]
+      end
     end
 
     #bottom_left = board.board[row + 2][column - 1] if (row + 2 <= board.board.length - 1) && (column - 1 >= 0)
     if (row + 2 <= board.board.length - 1) && (column - 1 >= 0)
       bottom_left = board.board[row + 2][column - 1]
-      moves_available << Move.new(@position, [row + 2, column - 1], self)
-      controlled_squares << [row + 2, column - 1]
+
+      if bottom_left == 0 || (bottom_left != 0 && bottom_left.color != @color)
+        moves_available << Move.new(@position, [row + 2, column - 1], self)
+        controlled_squares << [row + 2, column - 1]
+      end
     end
 
     #bottom_right = board.board[row + 2][column + 1] if (row + 2 <= board.board.length - 1) && (column + 1 <= board.board[0].length - 1)
     if (row + 2 <= board.board.length - 1) && (column + 1 <= board.board[0].length - 1)
       bottom_right = board.board[row + 2][column + 1]
-      moves_available << Move.new(@position, [row + 2, column + 1], self)
-      controlled_squares << [row + 2, column + 1]
+
+      if bottom_right == 0 || (bottom_right != 0 && bottom_right.color != @color)
+        moves_available << Move.new(@position, [row + 2, column + 1], self)
+        controlled_squares << [row + 2, column + 1]
+      end
     end
 
     #left_top = board.board[row - 1][column - 2] if (row - 1 >= 0) && (column - 2 >= 0)
     if (row - 1 >= 0) && (column - 2 >= 0)
       left_top = board.board[row - 1][column - 2]
-      moves_available << Move.new(@position, [row - 1, column - 2], self)
-      controlled_squares << [row - 1, column - 2]
+
+      if left_top == 0 || (left_top != 0 && left_top.color != @color)
+        moves_available << Move.new(@position, [row - 1, column - 2], self)
+        controlled_squares << [row - 1, column - 2]
+      end
     end
 
     #left_bottom = board.board[row + 1][column - 2] if (row + 1 <= board.board.length - 1) && (column - 2 >= 0)
     if (row + 1 <= board.board.length - 1) && (column - 2 >= 0)
       left_bottom = board.board[row + 1][column - 2]
-      moves_available << Move.new(@position, [row + 1, column - 2], self)
-      controlled_squares << [row + 1, column - 2]
+
+      if left_bottom == 0 || (left_bottom != 0 && left_bottom.color != @color)
+        moves_available << Move.new(@position, [row + 1, column - 2], self)
+        controlled_squares << [row + 1, column - 2]
+      end
     end
 
     #right_top = board.board[row - 1][column + 2] if (row - 1 >= 0) && (column + 2 <= board.board[0].length - 1)
-    p (row - 1 >= 0) && (column + 2 <= board.board[0].length - 1)
     if (row - 1 >= 0) && (column + 2 <= board.board[0].length - 1)
       right_top = board.board[row - 1][column + 2]
-      moves_available << Move.new(@position, [row - 1, column + 2], self)
-      controlled_squares << [row - 1, column + 2]
+
+      if right_top == 0 || (right_top != 0 && right_top.color != @color)
+        moves_available << Move.new(@position, [row - 1, column + 2], self)
+        controlled_squares << [row - 1, column + 2]
+      end
     end
 
     #right_bottom = board.board[row + 1][column + 2] if (row + 1 <= board.board.length - 1) && (column + 2 <= board.board[0].length)
     if (row + 1 <= board.board.length - 1) && (column + 2 <= board.board[0].length - 1)
       right_bottom = board.board[row + 1][column + 2]
-      moves_available << Move.new(@position, [row + 1, column + 2], self)
-      controlled_squares << [row + 1, column + 2]
+
+      if right_bottom == 0 || (right_bottom != 0 && right_bottom.color != @color)
+        moves_available << Move.new(@position, [row + 1, column + 2], self)
+        controlled_squares << [row + 1, column + 2]
+      end
     end
 
-
     @possible_moves = []
-    moves_available.each { |move| @possible_moves << move }
+    moves_available.each do |move|
+      @possible_moves << move
+    end
+
     return controlled_squares
   end
 end
