@@ -28,13 +28,22 @@ class Game
     # Update where it can move (pseudo-legal moves)
     # 
 
-    @board.update_moves
+    controlled_squares = @board.update_moves
+    p controlled_squares
+
     @board.print_board
     first_piece = @player.player_input("Select the piece you wish to move")
+    piece_coords = convert_board_to_arrays(first_piece)
+    row = piece_coords[0]
+    column = piece_coords[1]
+    piece_on_board = @board.board[row][column]
+
+    @board.print_board_highlighted(piece_on_board)
+
     second_piece = @player.player_input("Select the destination square")
     move = @board.move_piece(first_piece, second_piece)
     @move_history << move
-    p @move_history
+    #p @move_history
 
     @turn == @player ? @turn = @computer : @turn = @player
   end
