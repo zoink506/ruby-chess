@@ -75,7 +75,61 @@ class Queen < Piece
   end
 
   def update_possible_moves(board)
+    moves_available = []
+    controlled_squares = []
 
+    top = search(board.board, 0, -1)
+    bottom = search(board.board, 0, 1)
+    left = search(board.board, -1, 0)
+    right = search(board.board, 1, 0)
+    top_left = search(board.board, -1, -1)
+    top_right = search(board.board, 1, -1)
+    bottom_left = search(board.board, -1, 1)
+    bottom_right = search(board.board, 1, 1)
+
+    top.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    bottom.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    left.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    right.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    top_left.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    top_right.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    bottom_left.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    bottom_right.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    @possible_moves = []
+    moves_available.each { |move| @possible_moves << move }
+    return controlled_squares
   end
 end
 
@@ -97,6 +151,29 @@ class Bishop < Piece
     bottom_left = search(board.board, -1, 1)
     bottom_right = search(board.board, 1, 1)
 
+    top_left.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    top_right.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    bottom_left.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    bottom_right.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    @possible_moves = []
+    moves_available.each { |move| @possible_moves << move }
+    return controlled_squares
   end
 end
 
@@ -110,7 +187,73 @@ class Knight < Piece
   end
 
   def update_possible_moves(board)
+    moves_available = []
+    controlled_squares = []
+    row = @position[0]
+    column = @position[1]
 
+    if (row - 2 >= 0) && (column - 1 >= 0)
+      top_left = board.board[row - 2][column - 1]
+      moves_available << Move.new(@position, [row - 2, column - 1], self)
+      controlled_squares << [row - 2, column - 1]
+    end
+    # DO THIS TO ALL OTHER IFs BELOW
+    # CHECK FOR COLOR OF PIECE BEFORE ADDING TO MOVES LIST
+
+    #top_right = board.board[row - 2][column + 1] if (row - 2 >= 0) && (column + 1 <= board.board[0].length - 1)
+    if (row - 2 >= 0) && (column + 1 <= board.board[0].length - 1)
+      top_right = board.board[row - 2][column + 1]
+      moves_available << Move.new(@position, [row - 2, column + 1], self)
+      controlled_squares << [row - 2, column + 1]
+    end
+
+    #bottom_left = board.board[row + 2][column - 1] if (row + 2 <= board.board.length - 1) && (column - 1 >= 0)
+    if (row + 2 <= board.board.length - 1) && (column - 1 >= 0)
+      bottom_left = board.board[row + 2][column - 1]
+      moves_available << Move.new(@position, [row + 2, column - 1], self)
+      controlled_squares << [row + 2, column - 1]
+    end
+
+    #bottom_right = board.board[row + 2][column + 1] if (row + 2 <= board.board.length - 1) && (column + 1 <= board.board[0].length - 1)
+    if (row + 2 <= board.board.length - 1) && (column + 1 <= board.board[0].length - 1)
+      bottom_right = board.board[row + 2][column + 1]
+      moves_available << Move.new(@position, [row + 2, column + 1], self)
+      controlled_squares << [row + 2, column + 1]
+    end
+
+    #left_top = board.board[row - 1][column - 2] if (row - 1 >= 0) && (column - 2 >= 0)
+    if (row - 1 >= 0) && (column - 2 >= 0)
+      left_top = board.board[row - 1][column - 2]
+      moves_available << Move.new(@position, [row - 1, column - 2], self)
+      controlled_squares << [row - 1, column - 2]
+    end
+
+    #left_bottom = board.board[row + 1][column - 2] if (row + 1 <= board.board.length - 1) && (column - 2 >= 0)
+    if (row + 1 <= board.board.length - 1) && (column - 2 >= 0)
+      left_bottom = board.board[row + 1][column - 2]
+      moves_available << Move.new(@position, [row + 1, column - 2], self)
+      controlled_squares << [row + 1, column - 2]
+    end
+
+    #right_top = board.board[row - 1][column + 2] if (row - 1 >= 0) && (column + 2 <= board.board[0].length - 1)
+    p (row - 1 >= 0) && (column + 2 <= board.board[0].length - 1)
+    if (row - 1 >= 0) && (column + 2 <= board.board[0].length - 1)
+      right_top = board.board[row - 1][column + 2]
+      moves_available << Move.new(@position, [row - 1, column + 2], self)
+      controlled_squares << [row - 1, column + 2]
+    end
+
+    #right_bottom = board.board[row + 1][column + 2] if (row + 1 <= board.board.length - 1) && (column + 2 <= board.board[0].length)
+    if (row + 1 <= board.board.length - 1) && (column + 2 <= board.board[0].length - 1)
+      right_bottom = board.board[row + 1][column + 2]
+      moves_available << Move.new(@position, [row + 1, column + 2], self)
+      controlled_squares << [row + 1, column + 2]
+    end
+
+
+    @possible_moves = []
+    moves_available.each { |move| @possible_moves << move }
+    return controlled_squares
   end
 end
 
@@ -124,7 +267,7 @@ class Rook < Piece
   end
 
   def update_possible_moves(board)
-    controlled_squares = [] # coordinates, return this to test for check
+    controlled_squares = []  # coordinates, return this to test for check
     moves_available = []     # Move objects, set to @possible_moves
 
     top = search(board.board, 0, -1)
