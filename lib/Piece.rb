@@ -23,7 +23,7 @@ class Piece
     moves = []
 
     count = 1
-    while count < distance
+    while count < distance + 1
       break if (row < 0 || row > board.length - 1) || (column < 0 || column > board[0].length - 1)
       
       square = board[row][column]
@@ -61,7 +61,60 @@ class King < Piece
   end
 
   def update_possible_moves(board)
+    moves_available = []
+    controlled_squares = []
 
+    top = search(board.board, 0, -1, 1)
+    top.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    bottom = search(board.board, 0, 1, 1)
+    bottom.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    left = search(board.board, -1, 0, 1)
+    left.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    right = search(board.board, 1, 0, 1)
+    right.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    top_left = search(board.board, -1, -1, 1)
+    top_left.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    top_right = search(board.board, 1, -1, 1)
+    top_right.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    bottom_left = search(board.board, -1, 1, 1)
+    bottom_left.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    bottom_right = search(board.board, 1, 1, 1)
+    bottom_right.each do |move|
+      moves_available << move
+      controlled_squares << move.new_position
+    end
+
+    @possible_moves = []
+    moves_available.each { |move| @possible_moves << move }
+    return controlled_squares
   end
 end
 
