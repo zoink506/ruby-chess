@@ -141,42 +141,50 @@ class Queen < Piece
     bottom_right = search(board.board, 1, 1)
 
     top.each do |move|
-      moves_available << move
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
       controlled_squares << move.new_position
     end
 
     bottom.each do |move|
-      moves_available << move
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
       controlled_squares << move.new_position
     end
 
     left.each do |move|
-      moves_available << move
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
       controlled_squares << move.new_position
     end
 
     right.each do |move|
-      moves_available << move
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
       controlled_squares << move.new_position
     end
 
     top_left.each do |move|
-      moves_available << move
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
       controlled_squares << move.new_position
     end
 
     top_right.each do |move|
-      moves_available << move
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
       controlled_squares << move.new_position
     end
 
     bottom_left.each do |move|
-      moves_available << move
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
       controlled_squares << move.new_position
     end
 
     bottom_right.each do |move|
-      moves_available << move
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
       controlled_squares << move.new_position
     end
 
@@ -205,22 +213,27 @@ class Bishop < Piece
     bottom_right = search(board.board, 1, 1)
 
     top_left.each do |move|
-      moves_available << move
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
       controlled_squares << move.new_position
     end
 
     top_right.each do |move|
-      moves_available << move
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
       controlled_squares << move.new_position
     end
 
     bottom_left.each do |move|
-      moves_available << move
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
       controlled_squares << move.new_position
     end
 
     bottom_right.each do |move|
-      moves_available << move
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
+      p recipient_piece if recipient_piece.class.name == "King"
       controlled_squares << move.new_position
     end
 
@@ -249,7 +262,7 @@ class Knight < Piece
       top_left = board.board[row - 2][column - 1]
 
       if top_left == 0 || (top_left != 0 && top_left.color != @color)
-        moves_available << Move.new(@position, [row - 2, column - 1], self)
+        moves_available << Move.new(@position, [row - 2, column - 1], self) if top_left.class.name != "King"
         controlled_squares << [row - 2, column - 1]
       end
     end
@@ -259,7 +272,7 @@ class Knight < Piece
       top_right = board.board[row - 2][column + 1]
 
       if top_right == 0 || (top_right != 0 && top_right.color != @color)
-        moves_available << Move.new(@position, [row - 2, column + 1], self)
+        moves_available << Move.new(@position, [row - 2, column + 1], self) if top_right.class.name != "King"
         controlled_squares << [row - 2, column + 1]
       end
     end
@@ -269,7 +282,7 @@ class Knight < Piece
       bottom_left = board.board[row + 2][column - 1]
 
       if bottom_left == 0 || (bottom_left != 0 && bottom_left.color != @color)
-        moves_available << Move.new(@position, [row + 2, column - 1], self)
+        moves_available << Move.new(@position, [row + 2, column - 1], self) if bottom_left.class.name != "King"
         controlled_squares << [row + 2, column - 1]
       end
     end
@@ -279,7 +292,7 @@ class Knight < Piece
       bottom_right = board.board[row + 2][column + 1]
 
       if bottom_right == 0 || (bottom_right != 0 && bottom_right.color != @color)
-        moves_available << Move.new(@position, [row + 2, column + 1], self)
+        moves_available << Move.new(@position, [row + 2, column + 1], self) if bottom_right.class.name != "King"
         controlled_squares << [row + 2, column + 1]
       end
     end
@@ -289,7 +302,7 @@ class Knight < Piece
       left_top = board.board[row - 1][column - 2]
 
       if left_top == 0 || (left_top != 0 && left_top.color != @color)
-        moves_available << Move.new(@position, [row - 1, column - 2], self)
+        moves_available << Move.new(@position, [row - 1, column - 2], self) if left_top.class.name != "King"
         controlled_squares << [row - 1, column - 2]
       end
     end
@@ -299,7 +312,7 @@ class Knight < Piece
       left_bottom = board.board[row + 1][column - 2]
 
       if left_bottom == 0 || (left_bottom != 0 && left_bottom.color != @color)
-        moves_available << Move.new(@position, [row + 1, column - 2], self)
+        moves_available << Move.new(@position, [row + 1, column - 2], self) if left_bottom.class.name != "King"
         controlled_squares << [row + 1, column - 2]
       end
     end
@@ -309,7 +322,7 @@ class Knight < Piece
       right_top = board.board[row - 1][column + 2]
 
       if right_top == 0 || (right_top != 0 && right_top.color != @color)
-        moves_available << Move.new(@position, [row - 1, column + 2], self)
+        moves_available << Move.new(@position, [row - 1, column + 2], self) if right_top.class.name != "King"
         controlled_squares << [row - 1, column + 2]
       end
     end
@@ -319,7 +332,7 @@ class Knight < Piece
       right_bottom = board.board[row + 1][column + 2]
 
       if right_bottom == 0 || (right_bottom != 0 && right_bottom.color != @color)
-        moves_available << Move.new(@position, [row + 1, column + 2], self)
+        moves_available << Move.new(@position, [row + 1, column + 2], self) if right_bottom.class.name != "King"
         controlled_squares << [row + 1, column + 2]
       end
     end
@@ -352,22 +365,26 @@ class Rook < Piece
     right = search(board.board, 1, 0)
 
     top.each do |move| 
-      moves_available << move
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
       controlled_squares << move.new_position
     end
 
     bottom.each do |move|
-      moves_available << move
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
       controlled_squares << move.new_position
     end
 
     left.each do |move| 
-      moves_available << move 
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
       controlled_squares << move.new_position
     end
 
     right.each do |move|
-      moves_available << move
+      recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
+      moves_available << move if recipient_piece.class.name != "King"
       controlled_squares << move.new_position
     end
 
@@ -425,7 +442,7 @@ class Pawn < Piece
           # if it is an enemy piece, add it to diagonals[] and possible_moves[]
           if left_diagonal.color != @color
             diagonals << [row + (1 * dir), column - 1]
-            moves_available << Move.new(@position, [row + (1 * dir), column - 1], self)
+            moves_available << Move.new(@position, [row + (1 * dir), column - 1], self) if left_diagonal.class.name != "King"
           end
         end
       end
@@ -438,7 +455,7 @@ class Pawn < Piece
         else
           if right_diagonal.color != @color
             diagonals << [row + (1 * dir), column + 1]
-            moves_available << Move.new(@position, [row + (1 * dir), column + 1], self)
+            moves_available << Move.new(@position, [row + (1 * dir), column + 1], self) if right_diagonal.class.name != "King"
           end
         end
       end

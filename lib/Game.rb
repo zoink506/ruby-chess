@@ -29,8 +29,25 @@ class Game
     # 
 
     controlled_squares = @board.update_moves
-    p controlled_squares
+    check_status = @board.test_check
+    p check_status
+    #p controlled_squares
 
+    # LIST OF PSEUDO LEGAL MOVES DONE
+    # filter @possible_moves for moves that leave the friendly king in check or take the enemy king
+    # controlled squares stays the same even if the move corresponding to it is removed
+    #
+    # to filter moves:
+    #   - for each move, duplicate board
+    #   - make the move on the duplicate board
+    #   - test if the friendly king is in check
+    #     - if yes, discard move (illegal)
+    #     - if no, keep move (legal)
+
+    #@board.filter_pseudo_moves
+
+
+    puts "REAL BOARD"
     @board.print_board
     first_piece = @player.player_input("Select the piece you wish to move")
     piece_coords = convert_board_to_arrays(first_piece)
@@ -38,6 +55,7 @@ class Game
     column = piece_coords[1]
     piece_on_board = @board.board[row][column]
 
+    puts "REAL BOARD HIGHLIGHTED"
     @board.print_board_highlighted(piece_on_board)
 
     second_piece = @player.player_input("Select the destination square")

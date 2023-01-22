@@ -40,6 +40,7 @@ class Board
       @board[6][i] = Pawn.new(:blue, [6,i])
     end
 
+    @attacked_spaces = []
   end
 
   def print_board
@@ -142,15 +143,59 @@ class Board
       end
     end
 
-    log_cells()
     controlled_squares = {
       :red => red_controlled_squares,
       :blue => blue_controlled_squares
     }
 
-    #puts "Red controlled squares: #{controlled_squares[:red]}"
-    #puts "Blue controlled squares: #{controlled_squares[:blue]}"
+    puts "Red controlled squares: #{controlled_squares[:red]}"
+    puts "Blue controlled squares: #{controlled_squares[:blue]}"
+    @attacked_spaces = controlled_squares
+
+    log_cells()
     return controlled_squares
+  end
+
+  def test_check()
+    # returns { :red => true/false, :blue => true/false }
+    check_hash = {
+      :red => false,
+      :blue => false
+    }
+
+    #puts "test_check"
+    #p @attacked_spaces
+
+    # find king
+    blue_king = find_piece("King", :blue)[0]
+    red_king = find_piece("King", :red)[0]
+    #p blue_king
+    #p red_king
+
+    if @attacked_spaces[:red].include?(blue_king.position)
+      check_hash[:blue] = true
+    end
+
+    if @attacked_spaces[:blue].include?(red_king.position)
+      check_hash[:red] = true
+    end
+
+    check_hash
+  end
+  
+  def find_piece(piece_type, color)
+    # returns array of all pieces matching description
+    matching_pieces = []
+
+    @board.each do |row|
+      row.each do |space|
+        if space.class.name == piece_type && space.color == color
+          matching_pieces << space
+        end
+      end
+    end
+
+    matching_pieces
   end
 
   def log_cells
@@ -161,5 +206,39 @@ class Board
         end
       end
     end
+  end
+
+  def filter_pseudo_moves
+    @board.each_with_index do |row, i|
+      row.each_with_index do |space, j|
+        piece = @board[i][j]
+
+        if piece != 0
+          piece.possible_moves.each do |move|
+            new_board = Marshal.load(Marshal.dump(self))
+            puts "NEW BOARD: #{piece.color} #{piece.class.name} - #{move.original_position} -> #{move.new_position}"
+
+            original_position = convert_arrays_to_board(move.original_position)
+            new_position = convert_arrays_to_board(move.new_position)
+
+            # only move piece if the place to be moved is not the king itself
+            # if the destination is the king's square, king is still in check essentially
+            # 
+
+            new_board.move_piece(original_position, new_position)
+            
+            new_board.update_moves
+            check_status = new_board.test_check
+            p check_status
+
+            new_board.print_board
+
+            # king being taken is throwing error when accessing king's position
+
+          end
+        end
+      end
+    end
+
   end
 end
