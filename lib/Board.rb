@@ -244,7 +244,7 @@ class Board
               updated_moves << move
             end
 
-            new_board.print_board
+            #new_board.print_board
 
           end
 

@@ -17,8 +17,11 @@ class Game
   def play 
     # Loop .round until checkmate or stalemate is declared
     20.times do
-      round
+      current_round = round
+      break if current_round == "exit"
     end
+
+    puts "Game Over"
   end
 
   def round
@@ -48,6 +51,8 @@ class Game
     puts "REAL BOARD"
     @board.print_board
     first_piece = @player.player_input(@board.board, "Select the piece you wish to move")
+    return "exit" if first_piece == "exit"
+
     piece_coords = convert_board_to_arrays(first_piece)
     row = piece_coords[0]
     column = piece_coords[1]
@@ -56,7 +61,7 @@ class Game
     puts "REAL BOARD HIGHLIGHTED"
     @board.print_board_highlighted(piece_on_board)
 
-    second_piece = @player.player_input("Select the destination square")
+    second_piece = @player.second_input(piece_on_board, "Select the destination square")
     move = @board.move_piece(first_piece, second_piece)
     @move_history << move
     #p @move_history

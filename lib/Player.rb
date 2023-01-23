@@ -1,13 +1,51 @@
+require_relative './Converter.rb'
+
 class Player
+  include Converter
+  
   def player_input(board, prompt)
     puts prompt
     loop do
       input = gets.chomp
-      return input if validate_input(board, input) == true
+      return input if input == "exit"
+      #return input if validate_input(input)
+
+      if validate_input(input)
+        if validate_piece(board, input)
+          return input
+        end
+      end
+
     end
   end
 
-  def validate_input(board, input)
+  def validate_piece(board, input)
+    input = convert_board_to_arrays(input)
+    row = input[0]
+    column = input[1]
+    piece = board[row][column]
+    if piece != 0
+      if piece.color == :blue
+        if !piece.possible_moves.empty?
+          return true
+        end
+      end
+    end
+
+    false
+  end
+
+  def validate_input(input)
+    # First input:
+    #   - First, check that the input is a valid position
+    #   - Then, check if the piece is blue
+    #   - Then, check if the piece has any available moves
+    #   - return false if any of above is not correct
+    # Second Input:
+    #   - First, check if the input is a valid position
+    #   - Then, check if the position is in the moves list
+    #   - return false if any of above is false
+
     if input.length == 2
       if ('a'..'h').include?(input[0]) && (1..8).include?(input[1].to_i)
         return true
@@ -15,5 +53,23 @@ class Player
     end
 
     return false
+  end
+
+  def second_input(piece, prompt)
+    puts prompt
+
+    loop do
+      input = gets.chomp
+      return input if validate_second_input(piece, input)
+    end
+
+  end
+
+  def validate_second_input(piece, input)
+    return false if validate_input(input) == false
+    input = convert_board_to_arrays(input)
+    return true if piece.possible_moves.map { |move| move.new_position }.include?(input)
+
+    false
   end
 end
