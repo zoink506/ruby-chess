@@ -130,7 +130,7 @@ class Board
       row.each_with_index do |square, j|
         if square != 0
           squares_controlled_by_piece = square.update_possible_moves(self)
-          p "#{i}-#{j}: #{squares_controlled_by_piece}"
+          #p "#{i}-#{j}: #{squares_controlled_by_piece}"
 
           squares_controlled_by_piece.each do |spot|
             if square.color == :red
@@ -152,11 +152,12 @@ class Board
     puts "Blue controlled squares: #{controlled_squares[:blue]}"
     @attacked_spaces = controlled_squares
 
-    log_cells()
+    #log_cells()
     return controlled_squares
   end
 
   def test_check()
+    # determines whether the current board is in check
     # returns { :red => true/false, :blue => true/false }
     check_hash = {
       :red => false,
@@ -181,6 +182,12 @@ class Board
     end
 
     check_hash
+  end
+
+  def test_checkmate
+    # determines whether the current board is checkmate
+    # if the king is in check and there is no legal moves 
+
   end
   
   def find_piece(piece_type, color)
@@ -214,6 +221,8 @@ class Board
         piece = @board[i][j]
 
         if piece != 0
+          updated_moves = []
+
           piece.possible_moves.each do |move|
             new_board = Marshal.load(Marshal.dump(self))
             puts "NEW BOARD: #{piece.color} #{piece.class.name} - #{move.original_position} -> #{move.new_position}"
@@ -231,11 +240,15 @@ class Board
             check_status = new_board.test_check
             p check_status
 
+            if check_status[piece.color] == false
+              updated_moves << move
+            end
+
             new_board.print_board
 
-            # king being taken is throwing error when accessing king's position
-
           end
+
+          piece.possible_moves = updated_moves
         end
       end
     end

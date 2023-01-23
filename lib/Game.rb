@@ -16,11 +16,9 @@ class Game
 
   def play 
     # Loop .round until checkmate or stalemate is declared
-    round
-    round
-    round
-    round
-    round
+    20.times do
+      round
+    end
   end
 
   def round
@@ -34,7 +32,7 @@ class Game
     #p controlled_squares
 
     # LIST OF PSEUDO LEGAL MOVES DONE
-    # filter @possible_moves for moves that leave the friendly king in check or take the enemy king
+    # filter @possible_moves for moves that leave the friendly king in check
     # controlled squares stays the same even if the move corresponding to it is removed
     #
     # to filter moves:
@@ -44,12 +42,12 @@ class Game
     #     - if yes, discard move (illegal)
     #     - if no, keep move (legal)
 
-    #@board.filter_pseudo_moves
-
+    @board.filter_pseudo_moves
+    @board.log_cells
 
     puts "REAL BOARD"
     @board.print_board
-    first_piece = @player.player_input("Select the piece you wish to move")
+    first_piece = @player.player_input(@board.board, "Select the piece you wish to move")
     piece_coords = convert_board_to_arrays(first_piece)
     row = piece_coords[0]
     column = piece_coords[1]
