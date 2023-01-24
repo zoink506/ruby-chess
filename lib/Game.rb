@@ -30,14 +30,14 @@ class Game
     # 
 
     controlled_squares = @board.update_moves
+    #p controlled_squares
+
+    @board.filter_pseudo_moves
+    @board.log_cells
     check_status = @board.test_check
     checkmate_status = @board.is_checkmate?
     p check_status
     p "checkmate_status: #{checkmate_status}"
-    #p controlled_squares
-
-    @board.filter_pseudo_moves
-    #@board.log_cells
 
     #puts "REAL BOARD"
     @board.print_board

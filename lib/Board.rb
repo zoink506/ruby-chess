@@ -298,10 +298,10 @@ class Board
     check_status = test_check()
 
     if check_status[:red] == true
-      red_pieces = find_piece("King", :red)
+      red_pieces = find_piece("Piece", :red)
       red_moves = []
       red_pieces.each { |piece| piece.possible_moves.each { |move| red_moves << move } }
-      p red_moves.map { |move| move.new_position }
+      red_moves.each { |move| p "#{move}: |  Original Position: #{move.original_position} |  New Position: #{move.new_position} |  Piece: #{move.piece}" }
       if red_moves.empty?
         # checkmate!
         puts "CHECKMATE"
@@ -309,19 +309,20 @@ class Board
       else
         puts "NOT CHECKMATE"
       end
-
     end
 
     if check_status[:blue] == true
       blue_pieces = find_piece("Piece", :blue)
-      nil
-
+      blue_moves = []
+      blue_pieces.each { |piece| piece.possible_moves.each { |move| blue_moves << move } }
+      if blue_moves.empty?
+        return :blue
+      end
     end
-
 
   end
 
   def is_stalemate?
-
+    
   end
 end
