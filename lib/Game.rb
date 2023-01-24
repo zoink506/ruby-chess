@@ -6,8 +6,8 @@ require_relative './Converter.rb'
 class Game
   include Converter
 
-  def initialize
-    @board = Board.new
+  def initialize(preset_board = nil)
+    @board = Board.new(preset_board)
     @player = Player.new
     @computer = Computer.new
     @turn = @player
@@ -16,7 +16,7 @@ class Game
 
   def play 
     # Loop .round until checkmate or stalemate is declared
-    20.times do
+    40.times do
       current_round = round
       break if current_round == "exit"
     end
@@ -31,40 +31,42 @@ class Game
 
     controlled_squares = @board.update_moves
     check_status = @board.test_check
+    checkmate_status = @board.is_checkmate?
     p check_status
+    p "checkmate_status: #{checkmate_status}"
     #p controlled_squares
 
-    # LIST OF PSEUDO LEGAL MOVES DONE
-    # filter @possible_moves for moves that leave the friendly king in check
-    # controlled squares stays the same even if the move corresponding to it is removed
-    #
-    # to filter moves:
-    #   - for each move, duplicate board
-    #   - make the move on the duplicate board
-    #   - test if the friendly king is in check
-    #     - if yes, discard move (illegal)
-    #     - if no, keep move (legal)
-
     @board.filter_pseudo_moves
-    @board.log_cells
+    #@board.log_cells
 
-    puts "REAL BOARD"
+    #puts "REAL BOARD"
     @board.print_board
-    first_piece = @player.player_input(@board.board, "Select the piece you wish to move")
-    return "exit" if first_piece == "exit"
 
-    piece_coords = convert_board_to_arrays(first_piece)
-    row = piece_coords[0]
-    column = piece_coords[1]
-    piece_on_board = @board.board[row][column]
+    if @turn == @player
+      first_piece = @player.player_input(@board.board, "Select the piece you wish to move")
+      return "exit" if first_piece == "exit"
 
-    puts "REAL BOARD HIGHLIGHTED"
-    @board.print_board_highlighted(piece_on_board)
+      piece_coords = convert_board_to_arrays(first_piece)
+      row = piece_coords[0]
+      column = piece_coords[1]
+      piece_on_board = @board.board[row][column]
 
-    second_piece = @player.second_input(piece_on_board, "Select the destination square")
-    move = @board.move_piece(first_piece, second_piece)
-    @move_history << move
-    #p @move_history
+      #puts "REAL BOARD HIGHLIGHTED"
+      @board.print_board_highlighted(piece_on_board)
+
+      second_piece = @player.second_input(piece_on_board, "Select the destination square")
+      move = @board.move_piece(first_piece, second_piece)
+      @move_history << move
+    else
+      # It is the computer's turn to move
+      computers_move = @computer.get_random_move(@board.board)
+      from = convert_arrays_to_board(computers_move.original_position)
+      to = convert_arrays_to_board(computers_move.new_position)
+
+      @board.move_piece(from, to)
+
+
+    end
 
     @turn == @player ? @turn = @computer : @turn = @player
   end

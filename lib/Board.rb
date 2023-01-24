@@ -7,37 +7,81 @@ class Board
   include Converter
   attr_accessor :board
 
-  def initialize
-    @board = []
-    8.times do |i|
-      @board[i] = []
-      8.times do |j| 
-        @board[i][j] = 0
+  def initialize(preset_board)
+    # [
+    #   [Rr, Nr, Br, Qr, Kr, Br, Nr, Rr],
+    #   [pr, pr, pr, pr, pr, pr, pr, pr],
+    #   [0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ],
+    #   [0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ],
+    #   [0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ],
+    #   [0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ],
+    #   [pb, pb, pb, pb, pb, pb, pb, pb],
+    #   [Rb, Nb, Bb, Qb, Kb, Bb, Nb, Rb],
+    # ]
+
+    if preset_board.nil?
+      @board = []
+      8.times do |i|
+        @board[i] = []
+        8.times do |j| 
+          @board[i][j] = 0
+        end
       end
-    end
 
-    @board[0][0] = Rook.new(:red, [0,0])
-    @board[0][1] = Knight.new(:red, [0,1])
-    @board[0][2] = Bishop.new(:red, [0,2])
-    @board[0][3] = Queen.new(:red, [0,3])
-    @board[0][4] = King.new(:red, [0,4])
-    @board[0][5] = Bishop.new(:red, [0,5])
-    @board[0][6] = Knight.new(:red, [0,6])
-    @board[0][7] = Rook.new(:red, [0,7])
-    for i in 0..7 do
-      @board[1][i] = Pawn.new(:red, [1,i])
-    end
+      @board[0][0] = Rook.new(:red, [0,0])
+      @board[0][1] = Knight.new(:red, [0,1])
+      @board[0][2] = Bishop.new(:red, [0,2])
+      @board[0][3] = Queen.new(:red, [0,3])
+      @board[0][4] = King.new(:red, [0,4])
+      @board[0][5] = Bishop.new(:red, [0,5])
+      @board[0][6] = Knight.new(:red, [0,6])
+      @board[0][7] = Rook.new(:red, [0,7])
+      for i in 0..7 do
+        @board[1][i] = Pawn.new(:red, [1,i])
+      end
 
-    @board[7][0] = Rook.new(:blue, [7,0])
-    @board[7][1] = Knight.new(:blue, [7,1])
-    @board[7][2] = Bishop.new(:blue, [7,2])
-    @board[7][3] = Queen.new(:blue, [7,3])
-    @board[7][4] = King.new(:blue, [7,4])
-    @board[7][5] = Bishop.new(:blue, [7,5])
-    @board[7][6] = Knight.new(:blue, [7,6])
-    @board[7][7] = Rook.new(:blue, [7,7])
-    for i in 0..7 do
-      @board[6][i] = Pawn.new(:blue, [6,i])
+      @board[7][0] = Rook.new(:blue, [7,0])
+      @board[7][1] = Knight.new(:blue, [7,1])
+      @board[7][2] = Bishop.new(:blue, [7,2])
+      @board[7][3] = Queen.new(:blue, [7,3])
+      @board[7][4] = King.new(:blue, [7,4])
+      @board[7][5] = Bishop.new(:blue, [7,5])
+      @board[7][6] = Knight.new(:blue, [7,6])
+      @board[7][7] = Rook.new(:blue, [7,7])
+      for i in 0..7 do
+        @board[6][i] = Pawn.new(:blue, [6,i])
+      end
+    else
+      piece_hash = {
+        'R' => Rook,
+        'N' => Knight,
+        'B' => Bishop,
+        'Q' => Queen,
+        'K' => King,
+        'p' => Pawn
+      }
+
+      @board = []
+      preset_board.each_with_index do |row, i|
+        @board[i] = []
+
+        row.each_with_index do |space, j|
+          if space == '0'
+            @board[i][j] = 0
+          elsif space.length == 2
+            if piece_hash.include?(space[0])
+              color = space[1] == "r" ? :red : :blue
+              target_class = piece_hash[space[0]]
+
+              @board[i][j] = target_class.new(color, [i, j])
+            end
+          else
+            @board[i][j] = 0
+          end
+
+        end
+      end
+
     end
 
     @attacked_spaces = []
@@ -148,15 +192,15 @@ class Board
       :blue => blue_controlled_squares
     }
 
-    puts "Red controlled squares: #{controlled_squares[:red]}"
-    puts "Blue controlled squares: #{controlled_squares[:blue]}"
+    #puts "Red controlled squares: #{controlled_squares[:red]}"
+    #puts "Blue controlled squares: #{controlled_squares[:blue]}"
     @attacked_spaces = controlled_squares
 
     #log_cells()
     return controlled_squares
   end
 
-  def test_check()
+  def test_check
     # determines whether the current board is in check
     # returns { :red => true/false, :blue => true/false }
     check_hash = {
@@ -183,12 +227,6 @@ class Board
 
     check_hash
   end
-
-  def test_checkmate
-    # determines whether the current board is checkmate
-    # if the king is in check and there is no legal moves 
-
-  end
   
   def find_piece(piece_type, color)
     # returns array of all pieces matching description
@@ -196,7 +234,7 @@ class Board
 
     @board.each do |row|
       row.each do |space|
-        if space.class.name == piece_type && space.color == color
+        if (space.class.name == piece_type || space.class.superclass.name == piece_type ) && space.color == color
           matching_pieces << space
         end
       end
@@ -225,7 +263,7 @@ class Board
 
           piece.possible_moves.each do |move|
             new_board = Marshal.load(Marshal.dump(self))
-            puts "NEW BOARD: #{piece.color} #{piece.class.name} - #{move.original_position} -> #{move.new_position}"
+            #puts "NEW BOARD: #{piece.color} #{piece.class.name} - #{move.original_position} -> #{move.new_position}"
 
             original_position = convert_arrays_to_board(move.original_position)
             new_position = convert_arrays_to_board(move.new_position)
@@ -238,7 +276,7 @@ class Board
             
             new_board.update_moves
             check_status = new_board.test_check
-            p check_status
+            #p check_status
 
             if check_status[piece.color] == false
               updated_moves << move
@@ -252,6 +290,38 @@ class Board
         end
       end
     end
+
+  end
+
+  def is_checkmate?
+    # If the king is in check and there are no legal moves for that side, it is checkmate
+    check_status = test_check()
+
+    if check_status[:red] == true
+      red_pieces = find_piece("King", :red)
+      red_moves = []
+      red_pieces.each { |piece| piece.possible_moves.each { |move| red_moves << move } }
+      p red_moves.map { |move| move.new_position }
+      if red_moves.empty?
+        # checkmate!
+        puts "CHECKMATE"
+        return :red
+      else
+        puts "NOT CHECKMATE"
+      end
+
+    end
+
+    if check_status[:blue] == true
+      blue_pieces = find_piece("Piece", :blue)
+      nil
+
+    end
+
+
+  end
+
+  def is_stalemate?
 
   end
 end
