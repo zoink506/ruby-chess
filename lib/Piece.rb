@@ -2,7 +2,7 @@ require_relative './Move.rb'
 require 'colorize'
 
 class Piece
-  attr_accessor :symbol, :color, :position, :original_position, :possible_moves
+  attr_accessor :symbol, :color, :position, :original_position, :possible_moves, :has_moved
 
   def log_cell
     color = @color == :red ? :light_red : :light_blue
@@ -58,6 +58,9 @@ class King < Piece
     @position = position
     @original_position = position
     @possible_moves = []
+    @can_castle_kingside = true
+    @can_castle_kingside = true
+    @has_moved = false
   end
 
   def update_possible_moves(board)
@@ -116,6 +119,57 @@ class King < Piece
     moves_available.each { |move| @possible_moves << move }
     return controlled_squares
   end
+
+  def update_castling_rights(board)
+    # Update castling rights.
+    # if king is in its original position,
+    # and the rook is in its original position,
+    # and all the spaces between king and rook are empty and not controlled by other color
+    # and the king is not in check,
+    # and the resulting position would not put the king in check,
+    # then set its castling rights to true
+    check_status = board.test_check
+
+    if !check_status[@color]
+      puts "#{color} KING IS NOT IN CHECK"
+
+      if !@has_moved
+        puts "#{@color} KING HAS NOT MOVED"
+
+        # King side castle
+        row = @position[0]
+        column = @position[1]
+        rook = board.board[row][column + 3]
+
+        if rook.class.name == "Rook" && !rook.has_moved && rook.color == @color
+          puts "#{@color} ROOK HAS NOT MOVED"
+          if board.board[row][column + 1] == 0 && board.board[row][column + 2] == 0
+            puts "ALL SPACES BETWEEN #{@color} KING ARE EMPTY"
+
+            opposite_color = @color == :red ? :blue : :red
+            if board.attacked_spaces[opposite_color].include?([row, column + 1]) || board.attacked_spaces[opposite_color].include?([row, column + 2])
+              puts "SPACES BETWEEN #{@color} KING ARE BEING ATTACKED"
+            else
+              puts "SPACES BETWEEN #{@color} KING ARE NOT BEING ATTACKED"
+              # create a new move to castle kingside
+              # add new attribute "type" to move class which describes:
+              #   - Regular moves (sliding pieces, knight, pawn)
+              #   - Promotion
+              #   - En Passant
+              #   - Castling
+
+            end
+
+          end
+
+        end
+
+        # Queen side castle
+
+      end
+    end
+
+  end
 end
 
 class Queen < Piece
@@ -125,6 +179,7 @@ class Queen < Piece
     @position = position
     @original_position = position
     @possible_moves = []
+    @has_moved = false
   end
 
   def update_possible_moves(board)
@@ -201,6 +256,7 @@ class Bishop < Piece
     @position = position
     @original_position = position
     @possible_moves = []
+    @has_moved = false
   end
 
   def update_possible_moves(board)
@@ -250,6 +306,7 @@ class Knight < Piece
     @position = position
     @original_position = position
     @possible_moves = []
+    @has_moved = false
   end
 
   def update_possible_moves(board)
@@ -353,6 +410,7 @@ class Rook < Piece
     @position = position
     @original_position = position
     @possible_moves = []
+    @has_moved = false
   end
 
   def update_possible_moves(board)
@@ -401,6 +459,7 @@ class Pawn < Piece
     @position = position
     @original_position = position
     @possible_moves = []
+    @has_moved = false
   end
 
   def update_possible_moves(board)

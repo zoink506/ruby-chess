@@ -34,6 +34,9 @@ class Game
 
     @board.filter_pseudo_moves
     @board.log_cells
+
+    @board.update_castling
+
     check_status = @board.test_check
     checkmate_status = @board.is_checkmate?
     stalemate_status = @board.is_stalemate?
@@ -65,8 +68,8 @@ class Game
       from = convert_arrays_to_board(computers_move.original_position)
       to = convert_arrays_to_board(computers_move.new_position)
 
-      @board.move_piece(from, to)
-
+      move = @board.move_piece(from, to)
+      @move_history << move
 
     end
 

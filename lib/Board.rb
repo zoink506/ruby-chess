@@ -5,7 +5,7 @@ require 'colorize'
 
 class Board
   include Converter
-  attr_accessor :board
+  attr_accessor :board, :attacked_spaces
 
   def initialize(preset_board)
     # [
@@ -161,6 +161,7 @@ class Board
     @board[position2[0]][position2[1]] = @board[position1[0]][position1[1]] # new position
     @board[position1[0]][position1[1]] = 0 # old position
     @board[position2[0]][position2[1]].position = position2
+    @board[position2[0]][position2[1]].has_moved = true
 
     Move.new(position1, position2, piece)
   end
@@ -234,7 +235,7 @@ class Board
 
     @board.each do |row|
       row.each do |space|
-        if (space.class.name == piece_type || space.class.superclass.name == piece_type ) && space.color == color
+        if (space.class.name == piece_type || space.class.superclass.name == piece_type ) && (space.color == color || color == :all)
           matching_pieces << space
         end
       end
@@ -347,4 +348,10 @@ class Board
     end
 
   end
+
+  def update_castling
+    kings = find_piece("King", :all)
+    p kings
+    kings.each { |king| king.update_castling_rights(self) }
+  end 
 end
