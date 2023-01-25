@@ -323,6 +323,28 @@ class Board
   end
 
   def is_stalemate?
-    
+    # If the king is not in check, and there are no legal moves, stalemate is declared
+    red_pieces = find_piece("Piece", :red)
+    blue_pieces = find_piece("Piece", :blue)
+    check_status = test_check()
+
+    red_moves = []
+    red_pieces.each { |piece| piece.possible_moves.each { |move| red_moves << move } }
+    #p "red moves: #{red_moves}"
+
+    blue_moves = []
+    blue_pieces.each { |piece| piece.possible_moves.each { |move| blue_moves << move } }
+    #p "blue moves: #{blue_moves}"
+
+    if red_moves.empty? && !check_status[:red]
+      puts "red is in stalemate"
+      return :red
+    end
+
+    if blue_moves.empty? && !check_status[:blue]
+      puts "blue is in stalemate"
+      return :blue
+    end
+
   end
 end

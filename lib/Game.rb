@@ -36,8 +36,10 @@ class Game
     @board.log_cells
     check_status = @board.test_check
     checkmate_status = @board.is_checkmate?
+    stalemate_status = @board.is_stalemate?
     p check_status
     p "checkmate_status: #{checkmate_status}"
+    p "stalemate_status: #{stalemate_status}"
 
     #puts "REAL BOARD"
     @board.print_board
