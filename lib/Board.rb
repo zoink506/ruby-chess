@@ -196,10 +196,19 @@ class Board
       rook = @board[row][column + 3]
       move_piece(convert_arrays_to_board(king.position), convert_arrays_to_board([row, column + 2]))
       move_piece(convert_arrays_to_board(rook.position), convert_arrays_to_board([row, column + 1]))
-      king.can_castle_kingside = false
+      king.can_castle = false
 
     elsif move.type == "Queenside Castle"
       # move king, then move rook
+      puts "QUEENSIDE CASTLE"
+      king = move.piece
+      
+      row = move.original_position[0]
+      column = move.original_position[1]
+      rook = @board[row][column - 4]
+      move_piece(convert_arrays_to_board(king.position), convert_arrays_to_board([row, column - 3]))
+      move_piece(convert_arrays_to_board(rook.position), convert_arrays_to_board([row, column - 2]))
+      king.can_castle = false
 
     elsif move.type == "En Passant"
       # i dunno bro
@@ -318,9 +327,11 @@ class Board
             # if the destination is the king's square, king is still in check essentially
             # 
 
-            new_board.move_piece(original_position, new_position)
+            #new_board.move_piece(original_position, new_position)
+            new_board.move_piece_on_board(move)
             
             new_board.update_moves
+            new_board.print_board
             check_status = new_board.test_check
             #p check_status
 

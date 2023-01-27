@@ -28,13 +28,13 @@ class Game
   def round
     # Loop through every piece
     # Update where it can move (pseudo-legal moves)
-    # 
 
     controlled_squares = @board.update_moves
     #p controlled_squares
 
-    @board.filter_pseudo_moves
     @board.update_castling
+    @board.filter_pseudo_moves
+    #@board.update_castling
     #@board.log_cells
 
     check_status = @board.test_check
@@ -68,11 +68,12 @@ class Game
     else
       # It is the computer's turn to move
       computers_move = @computer.get_random_move(@board.board)
-      from = convert_arrays_to_board(computers_move.original_position)
-      to = convert_arrays_to_board(computers_move.new_position)
+      #from = convert_arrays_to_board(computers_move.original_position)
+      #to = convert_arrays_to_board(computers_move.new_position)
 
-      move = @board.move_piece(from, to)
-      @move_history << move
+      @board.move_piece_on_board(computers_move)
+      #move = @board.move_piece(from, to)
+      #@move_history << move
 
     end
 

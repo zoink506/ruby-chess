@@ -52,7 +52,7 @@ class Piece
 end
 
 class King < Piece
-  attr_accessor :can_castle_kingside, :can_castle_queenside
+  attr_accessor :can_castle
 
   def initialize(color, position)
     @symbol = 'K'
@@ -60,8 +60,7 @@ class King < Piece
     @position = position
     @original_position = position
     @possible_moves = []
-    @can_castle_kingside = true
-    @can_castle_queenside = true
+    @can_castle = true
     @has_moved = false
   end
 
@@ -137,22 +136,22 @@ class King < Piece
 
       if !@has_moved
         puts "#{@color} KING HAS NOT MOVED"
-
-        # King side castle
         row = @position[0]
         column = @position[1]
+        opposite_color = @color == :red ? :blue : :red
+
+        # King side castle
         rook = board.board[row][column + 3]
 
         if rook.class.name == "Rook" && !rook.has_moved && rook.color == @color
-          puts "#{@color} ROOK HAS NOT MOVED"
+          #puts "#{@color} ROOK HAS NOT MOVED"
           if board.board[row][column + 1] == 0 && board.board[row][column + 2] == 0
-            puts "ALL SPACES BETWEEN #{@color} KING ARE EMPTY"
+            #puts "ALL SPACES BETWEEN #{@color} KING ARE EMPTY"
 
-            opposite_color = @color == :red ? :blue : :red
             if board.attacked_spaces[opposite_color].include?([row, column + 1]) || board.attacked_spaces[opposite_color].include?([row, column + 2])
-              puts "SPACES BETWEEN #{@color} KING ARE BEING ATTACKED"
+              #puts "SPACES BETWEEN #{@color} KING ARE BEING ATTACKED"
             else
-              puts "SPACES BETWEEN #{@color} KING ARE NOT BEING ATTACKED"
+              #puts "SPACES BETWEEN #{@color} KING ARE NOT BEING ATTACKED"
               # create a new move to castle kingside
               # add new attribute "type" to move class which describes:
               #   - Regular moves (sliding pieces, knight, pawn)
@@ -170,6 +169,26 @@ class King < Piece
         end
 
         # Queen side castle
+        rook = board.board[row][column - 4]
+        
+        if rook.class.name == "Rook" && !rook.has_moved && rook.color == @color
+          puts "#{@color} queenside piece is a rook of the same color that has not moved"
+
+          if board.board[row][column - 3] == 0 && board.board[row][column - 2] == 0 && board.board[row][column - 1] == 0
+            puts "#{@color} queenside squares are all empty"
+
+            if board.attacked_spaces[opposite_color].include?([row, column - 3]) || board.attacked_spaces[opposite_color].include?([row, column - 2]) || board.attacked_spaces[opposite_color].include?([row, column - 1])
+              puts "#{color} queenside squares are controlled by enemy"
+
+            else
+              puts "#{color} queenside squares are not controlled by enemy"
+
+              queen_castle = Move.new(@position, [row, column - 4], self, "Queenside Castle")
+              @possible_moves << queen_castle
+            end
+
+          end
+        end
 
       end
     end
