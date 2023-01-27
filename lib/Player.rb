@@ -1,5 +1,7 @@
 require_relative './Converter.rb'
 
+# RETURN THE MOVE OBJECT THAT HAS BEEN SELECTED, NOT THE INPUT!!!
+
 class Player
   include Converter
   
@@ -60,7 +62,9 @@ class Player
 
     loop do
       input = gets.chomp
-      return input if validate_second_input(piece, input)
+      move = validate_second_input(piece, input)
+      #return input if validate_second_input(piece, input)
+      return move if move != false
     end
 
   end
@@ -68,7 +72,8 @@ class Player
   def validate_second_input(piece, input)
     return false if validate_input(input) == false
     input = convert_board_to_arrays(input)
-    return true if piece.possible_moves.map { |move| move.new_position }.include?(input)
+    #return true if piece.possible_moves.map { |move| move.new_position }.include?(input)
+    piece.possible_moves.each { |move| return move if move.new_position == input }
 
     false
   end

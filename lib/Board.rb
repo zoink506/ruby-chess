@@ -166,6 +166,51 @@ class Board
     Move.new(position1, position2, piece)
   end
 
+  def move_piece_on_board(move)
+    # takes in a move object
+    # moves piece according to move object's @new_position and @original_position attributes
+    # first checks the type of move
+    #   - castling, en passant, promotion act differently
+    #   - "Regular" type moves simply call move_piece(...)
+
+    if move.type == "Regular"
+      puts "REGULAR MOVE"
+      # Call move_piece(...)
+      row1 = move.original_position[0]
+      column1 = move.original_position[1]
+      row2 = move.new_position[0]
+      column2 = move.new_position[1]
+      from = convert_arrays_to_board([row1, column1])
+      to = convert_arrays_to_board([row2, column2])
+
+      move_piece(from, to)
+      return move
+
+    elsif move.type == "Kingside Castle"
+      # Move king, then move rook
+      puts "KINGSIDE CASTLE"
+      king = move.piece
+
+      row = move.original_position[0]
+      column = move.original_position[1]
+      rook = @board[row][column + 3]
+      move_piece(convert_arrays_to_board(king.position), convert_arrays_to_board([row, column + 2]))
+      move_piece(convert_arrays_to_board(rook.position), convert_arrays_to_board([row, column + 1]))
+      king.can_castle_kingside = false
+
+    elsif move.type == "Queenside Castle"
+      # move king, then move rook
+
+    elsif move.type == "En Passant"
+      # i dunno bro
+
+    elsif move.type == "Promotion"
+      # Ask user which type of piece to promote to
+
+    end
+
+  end
+
   def update_moves
     red_controlled_squares = []
     blue_controlled_squares = []

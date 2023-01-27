@@ -52,6 +52,8 @@ class Piece
 end
 
 class King < Piece
+  attr_accessor :can_castle_kingside, :can_castle_queenside
+
   def initialize(color, position)
     @symbol = 'K'
     @color = color
@@ -59,7 +61,7 @@ class King < Piece
     @original_position = position
     @possible_moves = []
     @can_castle_kingside = true
-    @can_castle_kingside = true
+    @can_castle_queenside = true
     @has_moved = false
   end
 
@@ -157,6 +159,9 @@ class King < Piece
               #   - Promotion
               #   - En Passant
               #   - Castling
+              #   - 2 square move for pawn??
+              king_castle = Move.new(@position, [row, column + 3], self, "Kingside Castle")
+              @possible_moves << king_castle
 
             end
 

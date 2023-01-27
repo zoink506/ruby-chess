@@ -1,5 +1,5 @@
 class Move
-  attr_accessor :original_position, :new_position, :piece
+  attr_accessor :original_position, :new_position, :piece, :type
 
   def initialize(from, to, piece, type = "Regular")
     @original_position = from

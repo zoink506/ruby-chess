@@ -2,6 +2,7 @@ require_relative './Board.rb'
 require_relative './Player.rb'
 require_relative './Computer.rb'
 require_relative './Converter.rb'
+require_relative './Move.rb'
 
 class Game
   include Converter
@@ -33,9 +34,8 @@ class Game
     #p controlled_squares
 
     @board.filter_pseudo_moves
-    @board.log_cells
-
     @board.update_castling
+    #@board.log_cells
 
     check_status = @board.test_check
     checkmate_status = @board.is_checkmate?
@@ -60,8 +60,11 @@ class Game
       @board.print_board_highlighted(piece_on_board)
 
       second_piece = @player.second_input(piece_on_board, "Select the destination square")
-      move = @board.move_piece(first_piece, second_piece)
-      @move_history << move
+      #move = @board.move_piece(first_piece, second_piece)
+      #move = Move.new(piece_coords, convert_board_to_arrays(second_piece), piece_on_board)
+
+      @board.move_piece_on_board(second_piece)
+      #@move_history << move
     else
       # It is the computer's turn to move
       computers_move = @computer.get_random_move(@board.board)
