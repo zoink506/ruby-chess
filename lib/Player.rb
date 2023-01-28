@@ -77,4 +77,20 @@ class Player
 
     false
   end
+
+  def get_promotion_piece
+    puts "Select a piece to promote to"
+    puts "  1 - Queen"
+    puts "  2 - Rook"
+    puts "  3 - Bishop"
+    puts "  4 - Knight"
+    loop do
+      conversion = { '1' => Queen, '2' => Rook, '3' => Bishop, '4' => Knight }
+      input = gets.chomp
+      if (1..4).map { |n| n.to_s }.include?(input)
+        return conversion[input]
+      end
+    end
+
+  end
 end

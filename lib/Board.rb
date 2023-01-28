@@ -222,9 +222,20 @@ class Board
       @board[row1][column2] = 0
       move.piece.has_moved = true
 
-
     elsif move.type == "Promotion"
       # Ask user which type of piece to promote to
+      # Get whos turn it is
+      # if player, ask for the type of piece to promote to
+      
+      row1 = move.original_position[0]
+      column1 = move.original_position[1]
+      row2 = move.new_position[0]
+      column2 = move.new_position[1]
+
+
+
+      @board[row2][column2] = move.promoted_to.new(move.piece.color, move.new_position)
+      @board[row1][column1] = 0
 
     end
 
@@ -319,6 +330,11 @@ class Board
   end
 
   def filter_pseudo_moves
+    # Add promoted_to attribute to move object
+    # generate all types of promotions and add to possible moves list
+    # supply that move to the move board method
+    # helps computer make better decisions
+
     @board.each_with_index do |row, i|
       row.each_with_index do |space, j|
         piece = @board[i][j]
@@ -341,7 +357,8 @@ class Board
             new_board.move_piece_on_board(move)
             
             new_board.update_moves
-            #new_board.print_board
+            new_board.print_board
+            new_board.log_cells
             check_status = new_board.test_check
             #p check_status
 

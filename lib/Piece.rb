@@ -500,7 +500,10 @@ class Pawn < Piece
       if one_square_ahead == 0
         threshold = @color == :red ? 7 : 0
         if row + (1 * dir) == threshold
-          moves_available << Move.new(@position, [row + (1 * dir), column], self, "Promotion")
+          moves_available << Move.new(@position, [row + (1 * dir), column], self, "Promotion", Queen)
+          moves_available << Move.new(@position, [row + (1 * dir), column], self, "Promotion", Rook)
+          moves_available << Move.new(@position, [row + (1 * dir), column], self, "Promotion", Bishop)
+          moves_available << Move.new(@position, [row + (1 * dir), column], self, "Promotion", Knight)
         else
           moves_available << Move.new(@position, [row + (1 * dir), column], self)
         end

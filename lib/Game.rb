@@ -61,12 +61,19 @@ class Game
       #puts "REAL BOARD HIGHLIGHTED"
       @board.print_board_highlighted(piece_on_board)
 
-      second_piece = @player.second_input(piece_on_board, "Select the destination square")
+      selected_move = @player.second_input(piece_on_board, "Select the destination square")
+      if selected_move.type == "Promotion"
+        # if the move is a promotion type, get the piece to change into from the user
+        promotion = @player.get_promotion_piece
+        selected_move.promoted_to = promotion
+
+      end
+
       #move = @board.move_piece(first_piece, second_piece)
       #move = Move.new(piece_coords, convert_board_to_arrays(second_piece), piece_on_board)
 
-      @board.move_piece_on_board(second_piece)
-      @move_history << second_piece
+      @board.move_piece_on_board(selected_move)
+      @move_history << selected_move
       #@move_history << move
     else
       # It is the computer's turn to move
