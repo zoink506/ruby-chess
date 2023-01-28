@@ -173,8 +173,8 @@ class Board
     #   - castling, en passant, promotion act differently
     #   - "Regular" type moves simply call move_piece(...)
 
-    if move.type == "Regular"
-      puts "REGULAR MOVE"
+    if move.type == "Regular" || move.type == "2 Square Move"
+      #puts "REGULAR MOVE"
       # Call move_piece(...)
       row1 = move.original_position[0]
       column1 = move.original_position[1]
@@ -188,7 +188,7 @@ class Board
 
     elsif move.type == "Kingside Castle"
       # Move king, then move rook
-      puts "KINGSIDE CASTLE"
+      #puts "KINGSIDE CASTLE"
       king = move.piece
 
       row = move.original_position[0]
@@ -200,7 +200,7 @@ class Board
 
     elsif move.type == "Queenside Castle"
       # move king, then move rook
-      puts "QUEENSIDE CASTLE"
+      #puts "QUEENSIDE CASTLE"
       king = move.piece
       
       row = move.original_position[0]
@@ -211,7 +211,17 @@ class Board
       king.can_castle = false
 
     elsif move.type == "En Passant"
-      # i dunno bro
+      # Move pawn to correct location
+      # delete the pawn directly behind or in front of it
+      row1 = move.original_position[0]
+      column1 = move.original_position[1]
+      row2 = move.new_position[0]
+      column2 = move.new_position[1]
+
+      move_piece(convert_arrays_to_board(move.original_position), convert_arrays_to_board(move.new_position))
+      @board[row1][column2] = 0
+      move.piece.has_moved = true
+
 
     elsif move.type == "Promotion"
       # Ask user which type of piece to promote to
@@ -331,7 +341,7 @@ class Board
             new_board.move_piece_on_board(move)
             
             new_board.update_moves
-            new_board.print_board
+            #new_board.print_board
             check_status = new_board.test_check
             #p check_status
 
@@ -407,7 +417,47 @@ class Board
 
   def update_castling
     kings = find_piece("King", :all)
-    p kings
+    #p kings
     kings.each { |king| king.update_castling_rights(self) }
-  end 
+  end
+
+  def update_en_passant(move_history)
+    # Look at the last move in the move history
+    # If it is a pawn moving 2 spaces
+    # check the 2 squares beside it for an enemy pawn
+    # if the square has an enemy pawn, create a new move with type "En Passant"
+    latest_move = move_history[-1]
+
+    if !latest_move.nil?
+      if latest_move.type == "2 Square Move" && latest_move.piece.class.name == "Pawn"
+        puts "the latest move is a 2 square move by a pawn"
+
+        row = latest_move.new_position[0]
+        column = latest_move.new_position[1]
+
+        left_piece = @board[row][column - 1]
+        right_piece = @board[row][column + 1]
+
+        dir = latest_move.piece.color == :red ? -1 : 1
+
+        if left_piece != 0
+          puts "left_piece is not 0"
+          move = Move.new([row, column - 1], [row + (1 * dir), column], left_piece, "En Passant")
+          left_piece.possible_moves << move
+
+          left_piece.possible_moves.each { |move| puts "Move: #{move.original_position}, #{move.new_position}, #{move.piece.color} #{move.piece.class.name}, #{move.type}" }
+        end
+
+        if right_piece != 0
+          puts "right_piece is not 0"
+          move = Move.new([row, column + 1], [row + (1 * dir), column], right_piece, "En Passant")
+          right_piece.possible_moves << move
+
+          right_piece.possible_moves.each { |move| puts "Move: #{move.original_position}, #{move.new_position}, #{move.piece.color} #{move.piece.class.name}, #{move.type}" }
+        end
+      end
+    end 
+
+
+  end
 end

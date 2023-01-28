@@ -33,6 +33,7 @@ class Game
     #p controlled_squares
 
     @board.update_castling
+    @board.update_en_passant(@move_history)
     @board.filter_pseudo_moves
     #@board.update_castling
     #@board.log_cells
@@ -45,6 +46,7 @@ class Game
     p "stalemate_status: #{stalemate_status}"
 
     #puts "REAL BOARD"
+    @move_history.each_with_index { |move, i| puts "Move #{i}: from #{move.original_position}, to #{move.new_position}, piece: #{move.piece.color} #{move.piece.class.name}, type: #{move.type}" }
     @board.print_board
 
     if @turn == @player
@@ -64,6 +66,7 @@ class Game
       #move = Move.new(piece_coords, convert_board_to_arrays(second_piece), piece_on_board)
 
       @board.move_piece_on_board(second_piece)
+      @move_history << second_piece
       #@move_history << move
     else
       # It is the computer's turn to move
@@ -73,7 +76,7 @@ class Game
 
       @board.move_piece_on_board(computers_move)
       #move = @board.move_piece(from, to)
-      #@move_history << move
+      @move_history << computers_move
 
     end
 

@@ -132,10 +132,10 @@ class King < Piece
     check_status = board.test_check
 
     if !check_status[@color]
-      puts "#{color} KING IS NOT IN CHECK"
+      #puts "#{color} KING IS NOT IN CHECK"
 
       if !@has_moved
-        puts "#{@color} KING HAS NOT MOVED"
+        #puts "#{@color} KING HAS NOT MOVED"
         row = @position[0]
         column = @position[1]
         opposite_color = @color == :red ? :blue : :red
@@ -172,16 +172,16 @@ class King < Piece
         rook = board.board[row][column - 4]
         
         if rook.class.name == "Rook" && !rook.has_moved && rook.color == @color
-          puts "#{@color} queenside piece is a rook of the same color that has not moved"
+          #puts "#{@color} queenside piece is a rook of the same color that has not moved"
 
           if board.board[row][column - 3] == 0 && board.board[row][column - 2] == 0 && board.board[row][column - 1] == 0
-            puts "#{@color} queenside squares are all empty"
+            #puts "#{@color} queenside squares are all empty"
 
             if board.attacked_spaces[opposite_color].include?([row, column - 3]) || board.attacked_spaces[opposite_color].include?([row, column - 2]) || board.attacked_spaces[opposite_color].include?([row, column - 1])
-              puts "#{color} queenside squares are controlled by enemy"
+              #puts "#{color} queenside squares are controlled by enemy"
 
             else
-              puts "#{color} queenside squares are not controlled by enemy"
+              #puts "#{color} queenside squares are not controlled by enemy"
 
               queen_castle = Move.new(@position, [row, column - 4], self, "Queenside Castle")
               @possible_moves << queen_castle
@@ -498,15 +498,20 @@ class Pawn < Piece
 
       one_square_ahead = board.board[row + (1 * dir)][column]
       if one_square_ahead == 0
-        moves_available << Move.new(@position, [row + (1 * dir), column], self)
+        threshold = @color == :red ? 7 : 0
+        if row + (1 * dir) == threshold
+          moves_available << Move.new(@position, [row + (1 * dir), column], self, "Promotion")
+        else
+          moves_available << Move.new(@position, [row + (1 * dir), column], self)
+        end
         #moves_available << [row + (1 * dir), column]
 
-        if @position == @original_position
+        if @position == @original_position && row + (2 * dir) >= 0 && row + (2 * dir) <= board.board.length - 1
           # check 2 spaces ahead
           two_squares_ahead = board.board[row + (2 * dir)][column]
           if two_squares_ahead == 0
             # not a piece, move available
-            moves_available << Move.new(@position, [row + (2 * dir), column], self)
+            moves_available << Move.new(@position, [row + (2 * dir), column], self, "2 Square Move")
             #moves_available << [row + (2 * dir), column]
           end
         end
