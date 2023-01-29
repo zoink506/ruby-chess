@@ -493,12 +493,12 @@ class Pawn < Piece
     row = @position[0]
     column = @position[1]
     @color == :red ? dir = 1 : dir = -1
+    threshold = @color == :red ? 7 : 0
 
     if row + (1 * dir) >= 0 && row + (1 * dir) <= board.board.length - 1
 
       one_square_ahead = board.board[row + (1 * dir)][column]
       if one_square_ahead == 0
-        threshold = @color == :red ? 7 : 0
         if row + (1 * dir) == threshold
           moves_available << Move.new(@position, [row + (1 * dir), column], self, "Promotion", Queen)
           moves_available << Move.new(@position, [row + (1 * dir), column], self, "Promotion", Rook)
@@ -533,7 +533,18 @@ class Pawn < Piece
           # if it is an enemy piece, add it to diagonals[] and possible_moves[]
           if left_diagonal.color != @color
             diagonals << [row + (1 * dir), column - 1]
-            moves_available << Move.new(@position, [row + (1 * dir), column - 1], self) if left_diagonal.class.name != "King"
+
+            if left_diagonal.class.name != "King"
+              if row + (1 * dir) == threshold
+                # The capture is on the last rank, so the pawn can promote
+                moves_available << Move.new(@position, [row + (1 * dir), column - 1], self, "Promotion", Queen)
+                moves_available << Move.new(@position, [row + (1 * dir), column - 1], self, "Promotion", Rook)
+                moves_available << Move.new(@position, [row + (1 * dir), column - 1], self, "Promotion", Bishop)
+                moves_available << Move.new(@position, [row + (1 * dir), column - 1], self, "Promotion", Knight)
+              else
+                moves_available << Move.new(@position, [row + (1 * dir), column - 1], self)
+              end
+            end
           end
         end
       end
@@ -546,7 +557,18 @@ class Pawn < Piece
         else
           if right_diagonal.color != @color
             diagonals << [row + (1 * dir), column + 1]
-            moves_available << Move.new(@position, [row + (1 * dir), column + 1], self) if right_diagonal.class.name != "King"
+
+            if right_diagonal.class.name != "King"
+              if row + (1 * dir) == threshold
+                moves_available << Move.new(@position, [row + (1 * dir), column + 1], self, "Promotion", Queen)
+                moves_available << Move.new(@position, [row + (1 * dir), column + 1], self, "Promotion", Rook)
+                moves_available << Move.new(@position, [row + (1 * dir), column + 1], self, "Promotion", Bishop)
+                moves_available << Move.new(@position, [row + (1 * dir), column + 1], self, "Promotion", Knight)
+              else
+                moves_available << Move.new(@position, [row + (1 * dir), column + 1], self)
+              end
+            end
+
           end
         end
       end

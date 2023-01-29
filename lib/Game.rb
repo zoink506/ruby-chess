@@ -22,6 +22,7 @@ class Game
       break if current_round == "exit"
     end
 
+    @board.print_board
     puts "Game Over"
   end
 
@@ -41,6 +42,10 @@ class Game
     check_status = @board.test_check
     checkmate_status = @board.is_checkmate?
     stalemate_status = @board.is_stalemate?
+
+    return checkmate_status if !checkmate_status.nil?
+    return stalemate_status if !stalemate_status.nil?
+
     p check_status
     p "checkmate_status: #{checkmate_status}"
     p "stalemate_status: #{stalemate_status}"

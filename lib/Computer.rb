@@ -17,7 +17,7 @@ class Computer
 
     random_num = rand(0..moves_list.length - 1)
     chosen_move = moves_list[random_num]
-    p "chosen_move: #{chosen_move}"
+    #p "chosen_move: #{chosen_move}"
     chosen_move
 
   end

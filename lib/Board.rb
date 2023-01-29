@@ -357,8 +357,8 @@ class Board
             new_board.move_piece_on_board(move)
             
             new_board.update_moves
-            new_board.print_board
-            new_board.log_cells
+            #new_board.print_board
+            #new_board.log_cells
             check_status = new_board.test_check
             #p check_status
 
@@ -385,7 +385,7 @@ class Board
       red_pieces = find_piece("Piece", :red)
       red_moves = []
       red_pieces.each { |piece| piece.possible_moves.each { |move| red_moves << move } }
-      red_moves.each { |move| p "#{move}: |  Original Position: #{move.original_position} |  New Position: #{move.new_position} |  Piece: #{move.piece}" }
+      #red_moves.each { |move| p "#{move}: |  Original Position: #{move.original_position} |  New Position: #{move.new_position} |  Piece: #{move.piece}" }
       if red_moves.empty?
         # checkmate!
         puts "CHECKMATE"
@@ -404,6 +404,7 @@ class Board
       end
     end
 
+    nil
   end
 
   def is_stalemate?
@@ -430,6 +431,7 @@ class Board
       return :blue
     end
 
+    nil
   end
 
   def update_castling
@@ -452,25 +454,29 @@ class Board
         row = latest_move.new_position[0]
         column = latest_move.new_position[1]
 
-        left_piece = @board[row][column - 1]
         right_piece = @board[row][column + 1]
 
         dir = latest_move.piece.color == :red ? -1 : 1
 
-        if left_piece != 0
-          puts "left_piece is not 0"
-          move = Move.new([row, column - 1], [row + (1 * dir), column], left_piece, "En Passant")
-          left_piece.possible_moves << move
+        if column - 1 >= 0
+          left_piece = @board[row][column - 1]
+          if left_piece != 0
+            puts "left_piece is not 0"
+            move = Move.new([row, column - 1], [row + (1 * dir), column], left_piece, "En Passant")
+            left_piece.possible_moves << move
 
-          left_piece.possible_moves.each { |move| puts "Move: #{move.original_position}, #{move.new_position}, #{move.piece.color} #{move.piece.class.name}, #{move.type}" }
+            left_piece.possible_moves.each { |move| puts "Move: #{move.original_position}, #{move.new_position}, #{move.piece.color} #{move.piece.class.name}, #{move.type}" }
+          end
         end
 
-        if right_piece != 0
-          puts "right_piece is not 0"
-          move = Move.new([row, column + 1], [row + (1 * dir), column], right_piece, "En Passant")
-          right_piece.possible_moves << move
+        if column + 1 <= @board[row].length - 1
+          if right_piece != 0
+            puts "right_piece is not 0"
+            move = Move.new([row, column + 1], [row + (1 * dir), column], right_piece, "En Passant")
+            right_piece.possible_moves << move
 
-          right_piece.possible_moves.each { |move| puts "Move: #{move.original_position}, #{move.new_position}, #{move.piece.color} #{move.piece.class.name}, #{move.type}" }
+            right_piece.possible_moves.each { |move| puts "Move: #{move.original_position}, #{move.new_position}, #{move.piece.color} #{move.piece.class.name}, #{move.type}" }
+          end
         end
       end
     end 
