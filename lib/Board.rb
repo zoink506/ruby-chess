@@ -480,7 +480,69 @@ class Board
         end
       end
     end 
+  end
 
+  def evaluate_board()
+    # material and mobility evaluation
+    # each square of possible movement is worth 20?
+
+    red_score = 0
+    blue_score = 0
+    mobility_score = 7
+
+    piece_scores = {
+      King => 0,
+      Queen => 900,
+      Rook => 500,
+      Bishop => 300,
+      Knight => 300,
+      Pawn => 100
+    }
+
+    red_pieces = find_piece("Piece", :red)
+    blue_pieces = find_piece("Piece", :blue)
+
+    red_moves = []
+    blue_moves = []
+
+    red_pieces.each do |piece|
+      if piece.class.name == "Pawn"
+        # Pawns in center are better than pawns not in center
+        # but pawns in outer columns shuld stay back
+        pawn_bitboard = [
+          [1, 1,   1,   1,   1,   1, 1, 1],
+          [1, 1,   1,   1,   1,   1, 1, 1],
+          [1, 1, 1.5, 1.5, 1.5, 1.5, 1, 1],
+          [1, 1, 1.5, 2.5, 2.5, 1.5, 1, 1],
+          [1, 1, 1.5, 2.5, 2.5, 1.5, 1, 1],
+          [1, 1, 1.5, 1.5, 1.5, 1.5, 1, 1],
+          [1, 1,   1,   1,   1,   1, 1, 1],
+          [1, 1,   1,   1,   1,   1, 1, 1],
+        ]
+
+        material_points = piece_scores[piece.class]
+        row = piece.position[0]
+        column = piece.position[1]
+        red_score += material_points * pawn_bitboard[row][column]
+
+      else
+        red_score += piece_scores[piece.class]
+      end
+
+      piece.possible_moves.each { |move| red_moves << move }
+    end
+
+    blue_pieces.each do |piece|
+      blue_score += piece_scores[piece.class]
+
+      piece.possible_moves.each { |move| blue_moves << move }
+    end
+
+    red_score += red_moves.length * mobility_score
+    blue_score += blue_moves.length * mobility_score
+
+    score = red_score - blue_score
+    return score
 
   end
 end

@@ -82,9 +82,11 @@ class Game
       #@move_history << move
     else
       # It is the computer's turn to move
-      computers_move = @computer.get_random_move(@board.board)
+      #computers_move = @computer.get_random_move(@board.board)
       #from = convert_arrays_to_board(computers_move.original_position)
       #to = convert_arrays_to_board(computers_move.new_position)
+
+      computers_move = @computer.find_best_move(@board, @move_history)
 
       @board.move_piece_on_board(computers_move)
       #move = @board.move_piece(from, to)
