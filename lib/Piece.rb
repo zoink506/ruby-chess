@@ -313,7 +313,7 @@ class Bishop < Piece
     bottom_right.each do |move|
       recipient_piece = board.board[move.new_position[0]][move.new_position[1]]
       moves_available << move if recipient_piece.class.name != "King"
-      p recipient_piece if recipient_piece.class.name == "King"
+      #p recipient_piece if recipient_piece.class.name == "King"
       controlled_squares << move.new_position
     end
 

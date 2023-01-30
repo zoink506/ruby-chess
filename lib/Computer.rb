@@ -42,78 +42,18 @@ class Computer
       new_board.update_en_passant(move_history)
       new_board.filter_pseudo_moves
 
-      sleep(0.5)
       board_score = new_board.evaluate_board
       if board_score > max_score
         max_score = board_score
         chosen_move = move
       end
 
-      puts "Score: #{board_score}"
-      new_board.print_board
+      #puts "Score: #{board_score}"
+      #new_board.print_board
 
-      puts "Chosen move: #{chosen_move}"
+      #puts "Chosen move: #{chosen_move}"
     end
 
     chosen_move
-  end
-
-  def minimax(board, move_history, depth, maximising_player)
-    #sleep(0.1)
-    # maximising player is bot
-    # minimising player is human
-    # for each child of position
-    # = for each possible move available to that side
-    # REMEMBER to move the move_history to board object instead of game object
-
-    board.update_moves
-    board.update_castling
-    board.update_en_passant(move_history)
-    board.filter_pseudo_moves
-
-    if depth == 0
-      return board.evaluate_board
-    end
-
-    if maximising_player
-      max_eval = -Float::INFINITY
-
-      pieces = board.find_piece("Piece", :red)
-      children = []
-      pieces.each { |piece| piece.possible_moves.each { |move| children << move } }
-      chosen_move = []
-
-      children.each do |move|
-        new_board = Marshal.load(Marshal.dump(board))
-        new_board.move_piece_on_board(move)
-        #new_board.print_board
-
-        move_eval = minimax(new_board, move_history, depth - 1, false)
-        max_eval = [max_eval, move_eval].max
-        #p "max_eval: #{max_eval}"
-      end
-
-      return max_eval
-    else
-      min_eval = Float::INFINITY
-
-      pieces = board.find_piece("Piece", :blue)
-      children = []
-      pieces.each { |piece| piece.possible_moves.each { |move| children << move } }
-      chosen_move = []
-
-      children.each do |move|
-        new_board = Marshal.load(Marshal.dump(board))
-        new_board.move_piece_on_board(move)
-        #new_board.print_board
-
-        move_eval = minimax(new_board, move_history, depth - 1, true)
-        min_eval = [min_eval, move_eval].min
-        #p "min_eval: #{min_eval}"
-
-      end
-
-      return min_eval
-    end
   end
 end

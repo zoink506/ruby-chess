@@ -88,7 +88,7 @@ class Game
 
       computers_move = @computer.find_best_move(@board, @move_history)
       #computers_move = @computer.minimax(@board, @move_history, 2, true)
-      p computers_move
+      #p computers_move
 
       @board.move_piece_on_board(computers_move)
       #move = @board.move_piece(from, to)
