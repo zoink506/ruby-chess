@@ -449,7 +449,7 @@ class Board
 
     if !latest_move.nil?
       if latest_move.type == "2 Square Move" && latest_move.piece.class.name == "Pawn"
-        puts "the latest move is a 2 square move by a pawn"
+        #puts "the latest move is a 2 square move by a pawn"
 
         row = latest_move.new_position[0]
         column = latest_move.new_position[1]
@@ -461,21 +461,21 @@ class Board
         if column - 1 >= 0
           left_piece = @board[row][column - 1]
           if left_piece != 0
-            puts "left_piece is not 0"
+            #puts "left_piece is not 0"
             move = Move.new([row, column - 1], [row + (1 * dir), column], left_piece, "En Passant")
             left_piece.possible_moves << move
 
-            left_piece.possible_moves.each { |move| puts "Move: #{move.original_position}, #{move.new_position}, #{move.piece.color} #{move.piece.class.name}, #{move.type}" }
+            #left_piece.possible_moves.each { |move| puts "Move: #{move.original_position}, #{move.new_position}, #{move.piece.color} #{move.piece.class.name}, #{move.type}" }
           end
         end
 
         if column + 1 <= @board[row].length - 1
           if right_piece != 0
-            puts "right_piece is not 0"
+            #puts "right_piece is not 0"
             move = Move.new([row, column + 1], [row + (1 * dir), column], right_piece, "En Passant")
             right_piece.possible_moves << move
 
-            right_piece.possible_moves.each { |move| puts "Move: #{move.original_position}, #{move.new_position}, #{move.piece.color} #{move.piece.class.name}, #{move.type}" }
+            #right_piece.possible_moves.each { |move| puts "Move: #{move.original_position}, #{move.new_position}, #{move.piece.color} #{move.piece.class.name}, #{move.type}" }
           end
         end
       end
@@ -485,10 +485,12 @@ class Board
   def evaluate_board()
     # material and mobility evaluation
     # each square of possible movement is worth 20?
+    # +score is good for computer
+    # -score is good for player
 
     red_score = 0
     blue_score = 0
-    mobility_score = 7
+    mobility_score = 5
 
     piece_scores = {
       King => 0,
