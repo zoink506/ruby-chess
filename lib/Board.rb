@@ -276,6 +276,8 @@ class Board
   end
 
   def unmake_move(move)
+    # how to unmake a move where a piece was taken?
+    # 
 
   end
 
