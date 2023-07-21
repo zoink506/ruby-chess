@@ -30,17 +30,7 @@ class Game
   end
 
   def round
-    # Loop through every piece
-    # Update where it can move (pseudo-legal moves)
-
-    controlled_squares = @board.update_moves
-    #p controlled_squares
-
-    @board.update_castling
-    @board.update_en_passant(@move_history)
-    @board.filter_pseudo_moves
-    #@board.update_castling
-    #@board.log_cells
+    @board.update_moves(@move_history)
 
     check_status = @board.test_check
     checkmate_status = @board.is_checkmate?
@@ -66,8 +56,6 @@ class Game
       column = piece_coords[1]
       piece_on_board = @board.board[row][column]
 
-      #puts "REAL BOARD HIGHLIGHTED"
-      #@board.print_board_highlighted(piece_on_board)
       print_board_highlighted(@board.board, piece_on_board)
 
       selected_move = @player.second_input(piece_on_board, "Select the destination square")
@@ -78,30 +66,16 @@ class Game
 
       end
 
-      #move = @board.move_piece(first_piece, second_piece)
-      #move = Move.new(piece_coords, convert_board_to_arrays(second_piece), piece_on_board)
-
       @board.move_piece_on_board(selected_move)
       @move_history << selected_move
-      #@move_history << move
     else
-      # It is the computer's turn to move
-      #computers_move = @computer.get_random_move(@board.board)
-      #from = convert_arrays_to_board(computers_move.original_position)
-      #to = convert_arrays_to_board(computers_move.new_position)
 
-      computers_move = @computer.find_best_move(@board, @move_history)
+      computers_move = @computer.get_random_move(@board.board)
 
       @board.move_piece_on_board(computers_move)
-      #move = @board.move_piece(from, to)
       @move_history << computers_move
-
     end
 
     @turn == @player ? @turn = @computer : @turn = @player
-  end
-
-  def piece_selected?
-
   end
 end

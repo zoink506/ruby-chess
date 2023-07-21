@@ -87,7 +87,9 @@ class Board
     @attacked_spaces = []
   end
 
-  def move_piece(position1, position2) # rename to generate_move
+  # Move a piece from one spot to another
+  # has no regard for whether the move is allowed, validation happens elsewhere
+  def move_piece(position1, position2)
     position1 = convert_board_to_arrays(position1)
     position2 = convert_board_to_arrays(position2)
     # from = @board[position1[0]][position1[1]]
@@ -177,7 +179,7 @@ class Board
 
   end
 
-  def update_moves
+  def update_moves(move_history)
     red_controlled_squares = []
     blue_controlled_squares = []
     all_moves = []
@@ -208,8 +210,9 @@ class Board
     #puts "Blue controlled squares: #{controlled_squares[:blue]}"
     @attacked_spaces = controlled_squares
 
-    #log_cells()
-    return controlled_squares
+    self.update_castling
+    self.update_en_passant(move_history)
+    self.filter_pseudo_moves
   end
 
   def test_check
@@ -266,50 +269,13 @@ class Board
   end
 
   def filter_pseudo_moves
-    # Add promoted_to attribute to move object
-    # generate all types of promotions and add to possible moves list
-    # supply that move to the move board method
-    # helps computer make better decisions
+    # get list of possible moves
+    # make each move,
+    # then check if the move would put the king in check
+    # if so,
+  end
 
-    @board.each_with_index do |row, i|
-      row.each_with_index do |space, j|
-        piece = @board[i][j]
-
-        if piece != 0
-          updated_moves = []
-
-          piece.possible_moves.each do |move|
-            new_board = Marshal.load(Marshal.dump(self))
-            #puts "NEW BOARD: #{piece.color} #{piece.class.name} - #{move.original_position} -> #{move.new_position}"
-
-            original_position = convert_arrays_to_board(move.original_position)
-            new_position = convert_arrays_to_board(move.new_position)
-
-            # only move piece if the place to be moved is not the king itself
-            # if the destination is the king's square, king is still in check essentially
-            # 
-
-            #new_board.move_piece(original_position, new_position)
-            new_board.move_piece_on_board(move)
-            
-            new_board.update_moves
-            #new_board.print_board
-            #new_board.log_cells
-            check_status = new_board.test_check
-            #p check_status
-
-            if check_status[piece.color] == false
-              updated_moves << move
-            end
-
-            #new_board.print_board
-
-          end
-
-          piece.possible_moves = updated_moves
-        end
-      end
-    end
+  def unmake_move(move)
 
   end
 
