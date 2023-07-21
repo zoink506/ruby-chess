@@ -3,15 +3,18 @@ require_relative './Player.rb'
 require_relative './Computer.rb'
 require_relative './Converter.rb'
 require_relative './Move.rb'
+require_relative './DisplayBoard.rb'
 
 class Game
   include Converter
+  include DisplayBoard
 
   def initialize(preset_board = nil)
     @board = Board.new(preset_board)
     @player = Player.new
     @computer = Computer.new
     @turn = @player
+    @piece_selected = false
     @move_history = []
   end
 
@@ -22,7 +25,7 @@ class Game
       break if current_round == "exit"
     end
 
-    @board.print_board
+    print_board(@board.board)
     puts "Game Over"
   end
 
@@ -52,7 +55,7 @@ class Game
 
     #puts "REAL BOARD"
     @move_history.each_with_index { |move, i| puts "Move #{i}: from #{move.original_position}, to #{move.new_position}, piece: #{move.piece.color} #{move.piece.class.name}, type: #{move.type}" }
-    @board.print_board
+    print_board(@board.board)
 
     if @turn == @player
       first_piece = @player.player_input(@board.board, "Select the piece you wish to move")
@@ -64,7 +67,8 @@ class Game
       piece_on_board = @board.board[row][column]
 
       #puts "REAL BOARD HIGHLIGHTED"
-      @board.print_board_highlighted(piece_on_board)
+      #@board.print_board_highlighted(piece_on_board)
+      print_board_highlighted(@board.board, piece_on_board)
 
       selected_move = @player.second_input(piece_on_board, "Select the destination square")
       if selected_move.type == "Promotion"
@@ -87,8 +91,6 @@ class Game
       #to = convert_arrays_to_board(computers_move.new_position)
 
       computers_move = @computer.find_best_move(@board, @move_history)
-      #computers_move = @computer.minimax(@board, @move_history, 2, true)
-      #p computers_move
 
       @board.move_piece_on_board(computers_move)
       #move = @board.move_piece(from, to)
@@ -97,5 +99,9 @@ class Game
     end
 
     @turn == @player ? @turn = @computer : @turn = @player
+  end
+
+  def piece_selected?
+
   end
 end

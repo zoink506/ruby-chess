@@ -1,4 +1,7 @@
 module Converter
+  # responsibilities:
+  #   - convert user-friendly board positions to program-friendly array values
+
   def convert_board_to_arrays(board_pos)
     # 'c3' = [2,3]
 

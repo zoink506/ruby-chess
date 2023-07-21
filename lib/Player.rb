@@ -1,7 +1,5 @@
 require_relative './Converter.rb'
 
-# RETURN THE MOVE OBJECT THAT HAS BEEN SELECTED, NOT THE INPUT!!!
-
 class Player
   include Converter
   
