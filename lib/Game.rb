@@ -55,7 +55,7 @@ class Game
 
     #puts "REAL BOARD"
     @move_history.each_with_index { |move, i| puts "Move #{i}: from #{move.original_position}, to #{move.new_position}, piece: #{move.piece.color} #{move.piece.class.name}, type: #{move.type}" }
-    print_board(@board.board)
+    print_board_highlighted(@board.board)
 
     if @turn == @player
       first_piece = @player.player_input(@board.board, "Select the piece you wish to move")

@@ -1,41 +1,16 @@
 require 'colorize'
+require_relative './Converter.rb'
 
 module DisplayBoard
+  include Converter
   # Prints the board to the terminal
 
-  def print_board(board)
-    row_number = 8
-
-    board.each do |row|
-      print row_number.to_s
-      print " "
-      row.each do |piece|
-        if piece == 0
-          print "|   "
-        else
-          piece_color = piece.color == :red ? :light_red : :light_blue
-          print "| " + piece.symbol.send(piece_color) + " "
-        end
-      end
-      print "|"
-      print "\n"
-
-      row_number -= 1
-    end
-
-    print "   "
-    8.times do |i|
-      print " #{convert_column_to_letter(i)}  "
-    end
-    print "\n"
-  end
-
-
-
-  def print_board_highlighted(board, highlighted_piece)
+  def print_board_highlighted(board, highlighted_piece = nil)
 
     row_number = 8
-    highlighted_squares = highlighted_piece.possible_moves.map { |move| move.new_position }
+
+    highlighted_squares = []
+    highlighted_squares = highlighted_piece.possible_moves.map { |move| move.new_position } if !highlighted_piece.nil?
 
     board.each_with_index do |row, i|
       print row_number.to_s
