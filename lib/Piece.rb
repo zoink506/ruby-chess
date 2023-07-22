@@ -27,7 +27,7 @@ class Piece
       break if (row < 0 || row > board.length - 1) || (column < 0 || column > board[0].length - 1)
       
       square = board[row][column]
-      move = Move.new(@position, [row, column], self)
+      move = Move.new(@position, [row, column], self, { type: "Regular" })
       #p square
 
       if square != 0 # is a piece
@@ -159,7 +159,7 @@ class King < Piece
               #   - En Passant
               #   - Castling
               #   - 2 square move for pawn??
-              king_castle = Move.new(@position, [row, column + 3], self, "Kingside Castle")
+              king_castle = Move.new(@position, [row, column + 3], self, { type: "Kingside Castle" })
               @possible_moves << king_castle
 
             end
@@ -183,7 +183,7 @@ class King < Piece
             else
               #puts "#{color} queenside squares are not controlled by enemy"
 
-              queen_castle = Move.new(@position, [row, column - 4], self, "Queenside Castle")
+              queen_castle = Move.new(@position, [row, column - 4], self, { type: "Queenside Castle" })
               @possible_moves << queen_castle
             end
 
@@ -343,133 +343,70 @@ class Knight < Piece
       top_left = board.board[row - 2][column - 1]
 
       if top_left == 0 || (top_left != 0 && top_left.color != @color)
-
-        if top_left.class.name != "King"
-          move = Move.new(@position, [row - 2, column - 1], self)
-          move.piece_taken = top_left if top_left != 0
-          moves_available << move
-        end
-
-        #moves_available << Move.new(@position, [row - 2, column - 1], self) if top_left.class.name != "King"
+        moves_available << Move.new(@position, [row - 2, column - 1], self, { type: "Regular", piece_taken: top_left == 0 ? nil : top_left }) if top_left.class.name != "King"
         controlled_squares << [row - 2, column - 1]
       end
     end
 
-    #top_right = board.board[row - 2][column + 1] if (row - 2 >= 0) && (column + 1 <= board.board[0].length - 1)
     if (row - 2 >= 0) && (column + 1 <= board.board[0].length - 1)
       top_right = board.board[row - 2][column + 1]
 
       if top_right == 0 || (top_right != 0 && top_right.color != @color)
-
-        if top_right.class.name != "King"
-          move = Move.new(@position, [row - 2, column + 1], self)
-          move.piece_taken = top_right if top_right != 0
-          moves_available << move
-        end
-
-        #moves_available << Move.new(@position, [row - 2, column + 1], self) if top_right.class.name != "King"
+        moves_available << Move.new(@position, [row - 2, column + 1], self, { type: "Regular", piece_taken: top_right == 0 ? nil : top_right }) if top_right.class.name != "King"
         controlled_squares << [row - 2, column + 1]
       end
     end
 
-    #bottom_left = board.board[row + 2][column - 1] if (row + 2 <= board.board.length - 1) && (column - 1 >= 0)
     if (row + 2 <= board.board.length - 1) && (column - 1 >= 0)
       bottom_left = board.board[row + 2][column - 1]
 
       if bottom_left == 0 || (bottom_left != 0 && bottom_left.color != @color)
-
-        if bottom_left.class.name != "King"
-          move = Move.new(@position, [row + 2, column - 1], self)
-          move.piece_taken = bottom_left if bottom_left != 0
-          moves_available << move
-        end
-
-        #moves_available << Move.new(@position, [row + 2, column - 1], self) if bottom_left.class.name != "King"
+        moves_available << Move.new(@position, [row + 2, column - 1], self, { type: "Regular", piece_taken: bottom_left == 0 ? nil : bottom_left }) if bottom_left.class.name != "King"
         controlled_squares << [row + 2, column - 1]
       end
     end
 
-    #bottom_right = board.board[row + 2][column + 1] if (row + 2 <= board.board.length - 1) && (column + 1 <= board.board[0].length - 1)
     if (row + 2 <= board.board.length - 1) && (column + 1 <= board.board[0].length - 1)
       bottom_right = board.board[row + 2][column + 1]
 
       if bottom_right == 0 || (bottom_right != 0 && bottom_right.color != @color)
-
-        if bottom_right.class.name != "King"
-          move = Move.new(@position, [row + 2, column + 1], self)
-          move.piece_taken = bottom_right if bottom_right != 0
-          moves_available << move
-        end
-
-        #moves_available << Move.new(@position, [row + 2, column + 1], self) if bottom_right.class.name != "King"
+        moves_available << Move.new(@position, [row + 2, column + 1], self, { type: "Regular", piece_taken: bottom_right == 0 ? nil : bottom_right }) if bottom_right.class.name != "King"
         controlled_squares << [row + 2, column + 1]
       end
     end
 
-    #left_top = board.board[row - 1][column - 2] if (row - 1 >= 0) && (column - 2 >= 0)
     if (row - 1 >= 0) && (column - 2 >= 0)
       left_top = board.board[row - 1][column - 2]
 
       if left_top == 0 || (left_top != 0 && left_top.color != @color)
-
-        if left_top.class.name != "King"
-          move = Move.new(@position, [row - 1, column - 2], self)
-          move.piece_taken = left_top if left_top != 0
-          moves_available << move
-        end
-
-        moves_available << Move.new(@position, [row - 1, column - 2], self) if left_top.class.name != "King"
+        moves_available << Move.new(@position, [row - 1, column - 2], self, { type: "Regular", piece_taken: left_top == 0 ? nil : left_top }) if left_top.class.name != "King"
         controlled_squares << [row - 1, column - 2]
       end
     end
 
-    #left_bottom = board.board[row + 1][column - 2] if (row + 1 <= board.board.length - 1) && (column - 2 >= 0)
     if (row + 1 <= board.board.length - 1) && (column - 2 >= 0)
       left_bottom = board.board[row + 1][column - 2]
 
       if left_bottom == 0 || (left_bottom != 0 && left_bottom.color != @color)
-
-        if left_bottom.class.name != "King"
-          move = Move.new(@position, [row + 1, column - 2], self)
-          move.piece_taken = left_bottom if left_bottom != 0
-          moves_available << move
-        end
-
-        moves_available << Move.new(@position, [row + 1, column - 2], self) if left_bottom.class.name != "King"
+        moves_available << Move.new(@position, [row + 1, column - 2], self, { type: "Regular", piece_taken: left_bottom == 0 ? nil : left_bottom }) if left_bottom.class.name != "King"
         controlled_squares << [row + 1, column - 2]
       end
     end
 
-    #right_top = board.board[row - 1][column + 2] if (row - 1 >= 0) && (column + 2 <= board.board[0].length - 1)
     if (row - 1 >= 0) && (column + 2 <= board.board[0].length - 1)
       right_top = board.board[row - 1][column + 2]
 
       if right_top == 0 || (right_top != 0 && right_top.color != @color)
-
-        if right_top.class.name != "King"
-          move = Move.new(@position, [row - 1, column + 2], self)
-          move.piece_taken = right_top if right_top != 0
-          moves_available << move
-        end
-
-        moves_available << Move.new(@position, [row - 1, column + 2], self) if right_top.class.name != "King"
+        moves_available << Move.new(@position, [row - 1, column + 2], self, { type: "Regular", piece_taken: right_top == 0 ? nil : right_top }) if right_top.class.name != "King"
         controlled_squares << [row - 1, column + 2]
       end
     end
 
-    #right_bottom = board.board[row + 1][column + 2] if (row + 1 <= board.board.length - 1) && (column + 2 <= board.board[0].length)
     if (row + 1 <= board.board.length - 1) && (column + 2 <= board.board[0].length - 1)
       right_bottom = board.board[row + 1][column + 2]
 
       if right_bottom == 0 || (right_bottom != 0 && right_bottom.color != @color)
-
-        if right_bottom.class.name != "King"
-          move = Move.new(@position, [row + 1, column + 2], self)
-          move.piece_taken = right_bottom if right_bottom != 0
-          moves_available << move
-        end
-
-        moves_available << Move.new(@position, [row + 1, column + 2], self) if right_bottom.class.name != "King"
+        moves_available << Move.new(@position, [row + 1, column + 2], self, { type: "Regular", piece_taken: right_bottom == 0 ? nil : right_bottom }) if right_bottom.class.name != "King"
         controlled_squares << [row + 1, column + 2]
       end
     end
@@ -556,12 +493,12 @@ class Pawn < Piece
       one_square_ahead = board.board[row + (1 * dir)][column]
       if one_square_ahead == 0
         if row + (1 * dir) == threshold
-          moves_available << Move.new(@position, [row + (1 * dir), column], self, "Promotion", Queen)
-          moves_available << Move.new(@position, [row + (1 * dir), column], self, "Promotion", Rook)
-          moves_available << Move.new(@position, [row + (1 * dir), column], self, "Promotion", Bishop)
-          moves_available << Move.new(@position, [row + (1 * dir), column], self, "Promotion", Knight)
+          moves_available << Move.new(@position, [row + (1 * dir), column], self, { type: "Promotion", promoted_to: Queen })
+          moves_available << Move.new(@position, [row + (1 * dir), column], self, { type: "Promotion", promoted_to: Rook })
+          moves_available << Move.new(@position, [row + (1 * dir), column], self, { type: "Promotion", promoted_to: Bishop })
+          moves_available << Move.new(@position, [row + (1 * dir), column], self, { type: "Promotion", promoted_to: Knight })
         else
-          moves_available << Move.new(@position, [row + (1 * dir), column], self)
+          moves_available << Move.new(@position, [row + (1 * dir), column], self, { type: "Regular" })
         end
         #moves_available << [row + (1 * dir), column]
 
@@ -570,7 +507,7 @@ class Pawn < Piece
           two_squares_ahead = board.board[row + (2 * dir)][column]
           if two_squares_ahead == 0
             # not a piece, move available
-            moves_available << Move.new(@position, [row + (2 * dir), column], self, "2 Square Move")
+            moves_available << Move.new(@position, [row + (2 * dir), column], self, { type: "2 Square Move" })
             #moves_available << [row + (2 * dir), column]
           end
         end
@@ -593,12 +530,20 @@ class Pawn < Piece
             if left_diagonal.class.name != "King"
               if row + (1 * dir) == threshold
                 # The capture is on the last rank, so the pawn can promote
-                moves_available << Move.new(@position, [row + (1 * dir), column - 1], self, "Promotion", Queen)
-                moves_available << Move.new(@position, [row + (1 * dir), column - 1], self, "Promotion", Rook)
-                moves_available << Move.new(@position, [row + (1 * dir), column - 1], self, "Promotion", Bishop)
-                moves_available << Move.new(@position, [row + (1 * dir), column - 1], self, "Promotion", Knight)
+                move = Move.new(@position, [row + (1 * dir), column - 1], self, { type: "Promotion", promoted_to: Queen, piece_taken: left_diagonal })
+                moves_available << move
+
+                move = Move.new(@position, [row + (1 * dir), column - 1], self, { type: "Promotion", promoted_to: Rook, piece_taken: left_diagonal })
+                moves_available << move
+
+                move = Move.new(@position, [row + (1 * dir), column - 1], self, { type: "Promotion", promoted_to: Bishop, piece_taken: left_diagonal })
+                moves_available << move
+
+                move = Move.new(@position, [row + (1 * dir), column - 1], self, { type: "Promotion", promoted_to: Knight, piece_taken: left_diagonal })
+                moves_available << move
               else
-                moves_available << Move.new(@position, [row + (1 * dir), column - 1], self)
+                move = Move.new(@position, [row + (1 * dir), column - 1], self, { type: "Regular", piece_taken: left_diagonal })
+                moves_available << move
               end
             end
           end
@@ -616,12 +561,21 @@ class Pawn < Piece
 
             if right_diagonal.class.name != "King"
               if row + (1 * dir) == threshold
-                moves_available << Move.new(@position, [row + (1 * dir), column + 1], self, "Promotion", Queen)
-                moves_available << Move.new(@position, [row + (1 * dir), column + 1], self, "Promotion", Rook)
-                moves_available << Move.new(@position, [row + (1 * dir), column + 1], self, "Promotion", Bishop)
-                moves_available << Move.new(@position, [row + (1 * dir), column + 1], self, "Promotion", Knight)
+
+                move = Move.new(@position, [row + (1 * dir), column + 1], self, { type: "Promotion", promoted_to: Queen, piece_taken: right_diagonal })
+                moves_available << move
+
+                move = Move.new(@position, [row + (1 * dir), column + 1], self, { type: "Promotion", promoted_to: Rook, piece_taken: right_diagonal })
+                moves_available << move
+
+                move = Move.new(@position, [row + (1 * dir), column + 1], self, { type: "Promotion", promoted_to: Bishop, piece_taken: right_diagonal })
+                moves_available << move
+
+                move = Move.new(@position, [row + (1 * dir), column + 1], self, { type: "Promotion", promoted_to: Knight, piece_taken: right_diagonal })
+                moves_available << move
               else
-                moves_available << Move.new(@position, [row + (1 * dir), column + 1], self)
+                move = Move.new(@position, [row + (1 * dir), column + 1], self, { type: "Regular", piece_taken: right_diagonal })
+                moves_available << move
               end
             end
 
@@ -633,5 +587,9 @@ class Pawn < Piece
     @possible_moves = []
     moves_available.each { |move| @possible_moves << move }
     return diagonals
+  end
+
+  def check_diagonal
+
   end
 end

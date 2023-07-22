@@ -100,8 +100,6 @@ class Board
     @board[position1[0]][position1[1]] = 0 # old position
     @board[position2[0]][position2[1]].position = position2
     @board[position2[0]][position2[1]].has_moved = true
-
-    Move.new(position1, position2, piece)
   end
 
   def move_piece_on_board(move)
@@ -176,6 +174,12 @@ class Board
       @board[row1][column1] = 0
 
     end
+
+  end
+
+  def unmake_move(move)
+    # how to unmake a move where a piece was taken?
+    # 
 
   end
 
@@ -273,12 +277,6 @@ class Board
     # make each move,
     # then check if the move would put the king in check
     # if so,
-  end
-
-  def unmake_move(move)
-    # how to unmake a move where a piece was taken?
-    # 
-
   end
 
   def is_checkmate?

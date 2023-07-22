@@ -44,7 +44,7 @@ class Game
     p "stalemate_status: #{stalemate_status}"
 
     #puts "REAL BOARD"
-    @move_history.each_with_index { |move, i| puts "Move #{i}: from #{move.original_position}, to #{move.new_position}, piece: #{move.piece.color} #{move.piece.class.name}, type: #{move.type}, piece_taken: #{move.piece_taken}" }
+    @move_history.each_with_index { |move, i| puts "Move #{i}: from #{move.original_position}, to #{move.new_position}, piece: #{move.piece.color} #{move.piece.class.name}, type: #{move.type}, piece_taken: #{move.piece_taken}, promoted_to: #{move.promoted_to}" }
     print_board_highlighted(@board.board)
 
     if @turn == @player

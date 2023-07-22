@@ -46,6 +46,7 @@ class Player
     #   - Then, check if the position is in the moves list
     #   - return false if any of above is false
 
+    # check if the input is a valid coordinate (within bounds of the board)
     if input.length == 2
       if ('a'..'h').include?(input[0]) && (1..8).include?(input[1].to_i)
         return true
@@ -71,6 +72,7 @@ class Player
     return false if validate_input(input) == false
     input = convert_board_to_arrays(input)
     #return true if piece.possible_moves.map { |move| move.new_position }.include?(input)
+    # GETS MOVE OBJECT FROM LIST OF POSSIBLE MOVES OF SELECTED PIECE
     piece.possible_moves.each { |move| return move if move.new_position == input }
 
     false
