@@ -178,8 +178,19 @@ class Board
   end
 
   def unmake_move(move)
-    # how to unmake a move where a piece was taken?
-    # 
+    # when given a move object, undo that move
+    # duplicate the move
+    # check what type of move it is
+    # 'Regular' moves:
+    #   - call move_piece( move.new_position, move.original_position ) to take the piece back to it's original position
+    #   - if a piece was taken, set the move.new_position to the piece object
+    # Castling moves:
+    #   - call move_piece( move.new_position, move.original_position ) to take the King back to it's original position
+    #   - create a new rook in the move.new_position
+    #   - clear the 2 squares between the King and the Rook
+    # En Passant:
+    #   - sumn idk
+
 
   end
 
@@ -351,7 +362,7 @@ class Board
 
     if !latest_move.nil?
       if latest_move.type == "2 Square Move" && latest_move.piece.class.name == "Pawn"
-        #puts "the latest move is a 2 square move by a pawn"
+        puts "the latest move is a 2 square move by a pawn"
 
         row = latest_move.new_position[0]
         column = latest_move.new_position[1]
@@ -362,22 +373,22 @@ class Board
 
         if column - 1 >= 0
           left_piece = @board[row][column - 1]
-          if left_piece != 0
+          if left_piece.class.name == "Pawn"
             #puts "left_piece is not 0"
-            move = Move.new([row, column - 1], [row + (1 * dir), column], left_piece, "En Passant")
+            move = Move.new([row, column - 1], [row + (1 * dir), column], left_piece, { type: "En Passant", piece_taken: latest_move.piece })
             left_piece.possible_moves << move
 
-            #left_piece.possible_moves.each { |move| puts "Move: #{move.original_position}, #{move.new_position}, #{move.piece.color} #{move.piece.class.name}, #{move.type}" }
+            left_piece.possible_moves.each { |move| puts "Move: #{move.original_position}, #{move.new_position}, #{move.piece.color} #{move.piece.class.name}, #{move.type}" }
           end
         end
 
         if column + 1 <= @board[row].length - 1
-          if right_piece != 0
+          if right_piece.class.name == "Pawn"
             #puts "right_piece is not 0"
-            move = Move.new([row, column + 1], [row + (1 * dir), column], right_piece, "En Passant")
+            move = Move.new([row, column + 1], [row + (1 * dir), column], right_piece, { type: "En Passant", piece_taken: latest_move.piece })
             right_piece.possible_moves << move
 
-            #right_piece.possible_moves.each { |move| puts "Move: #{move.original_position}, #{move.new_position}, #{move.piece.color} #{move.piece.class.name}, #{move.type}" }
+            right_piece.possible_moves.each { |move| puts "Move: #{move.original_position}, #{move.new_position}, #{move.piece.color} #{move.piece.class.name}, #{move.type}" }
           end
         end
       end

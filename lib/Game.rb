@@ -30,6 +30,20 @@ class Game
   end
 
   def round
+    #print_board_highlighted(@board.board)
+    @board.board.each do |row|
+      row.each do |piece| 
+        if piece.class.superclass == Piece
+          print piece.class.name
+        elsif piece == 0
+          print 0
+        else
+          print piece.inspect
+        end
+      end
+
+      print "\n"
+    end
     @board.update_moves(@move_history)
 
     check_status = @board.test_check
