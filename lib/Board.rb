@@ -147,8 +147,8 @@ class Board
       row = move.original_position[0]
       column = move.original_position[1]
       rook = @board[row][column - 4]
-      move_piece(convert_arrays_to_board(king.position), convert_arrays_to_board([row, column - 3]))
-      move_piece(convert_arrays_to_board(rook.position), convert_arrays_to_board([row, column - 2]))
+      move_piece(convert_arrays_to_board(king.position), convert_arrays_to_board([row, column - 2]))
+      move_piece(convert_arrays_to_board(rook.position), convert_arrays_to_board([row, column - 1]))
       king.can_castle = false
 
     elsif move.type == "En Passant"
@@ -200,7 +200,7 @@ class Board
     #p move
     puts "Move: from #{move.original_position}, to #{move.new_position}, piece: #{move.piece.color} #{move.piece.class.name}, type: #{move.type}, piece_taken: #{move.piece_taken}, promoted_to: #{move.promoted_to}"
 
-    if move.type == "Regular"
+    if move.type == "Regular" || move.type == "2 Square Move"
       move_piece(convert_arrays_to_board(move.new_position), convert_arrays_to_board(move.original_position))
       @board[move.new_position[0]][move.new_position[1]] = move.piece_taken if !move.piece_taken.nil?
     elsif move.type == "En Passant"
@@ -217,7 +217,16 @@ class Board
 
       end
     elsif move.type == "Kingside Castle"
-      
+      move_piece(convert_arrays_to_board(move.new_position), convert_arrays_to_board(move.original_position))
+      rook_pos = [ move.new_position[0], move.new_position[1] - 1 ]
+      rook_desired_pos = [ move.new_position[0], move.new_position[1] + 1 ]
+      move_piece( convert_arrays_to_board(rook_pos), convert_arrays_to_board(rook_desired_pos) )
+
+    elsif move.type == "Queenside Castle"
+      move_piece(convert_arrays_to_board(move.new_position), convert_arrays_to_board(move.original_position))
+      rook_pos = [ move.new_position[0], move.new_position[1] + 1 ]
+      rook_desired_pos = [ move.new_position[0], move.new_position[1] - 2 ]
+      move_piece( convert_arrays_to_board(rook_pos), convert_arrays_to_board(rook_desired_pos) )
     end
 
   end

@@ -159,7 +159,7 @@ class King < Piece
               #   - En Passant
               #   - Castling
               #   - 2 square move for pawn??
-              king_castle = Move.new(@position, [row, column + 3], self, { type: "Kingside Castle" })
+              king_castle = Move.new(@position, [row, column + 2], self, { type: "Kingside Castle" })
               @possible_moves << king_castle
 
             end
@@ -177,13 +177,13 @@ class King < Piece
           if board.board[row][column - 3] == 0 && board.board[row][column - 2] == 0 && board.board[row][column - 1] == 0
             #puts "#{@color} queenside squares are all empty"
 
-            if board.attacked_spaces[opposite_color].include?([row, column - 3]) || board.attacked_spaces[opposite_color].include?([row, column - 2]) || board.attacked_spaces[opposite_color].include?([row, column - 1])
+            if board.attacked_spaces[opposite_color].include?([row, column - 2]) || board.attacked_spaces[opposite_color].include?([row, column - 1])
               #puts "#{color} queenside squares are controlled by enemy"
 
             else
               #puts "#{color} queenside squares are not controlled by enemy"
 
-              queen_castle = Move.new(@position, [row, column - 4], self, { type: "Queenside Castle" })
+              queen_castle = Move.new(@position, [row, column - 2], self, { type: "Queenside Castle" })
               @possible_moves << queen_castle
             end
 
