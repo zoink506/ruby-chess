@@ -90,11 +90,16 @@ class Board
   # Move a piece from one spot to another
   # has no regard for whether the move is allowed, validation happens elsewhere
   def move_piece(position1, position2)
+    p position1
+    p position2
+
     position1 = convert_board_to_arrays(position1)
     position2 = convert_board_to_arrays(position2)
     # from = @board[position1[0]][position1[1]]
     # to = @board[position2[0]][position2[1]]
 
+    p position1
+    p position2
     piece = @board[position1[0]][position1[1]]
     @board[position2[0]][position2[1]] = @board[position1[0]][position1[1]] # new position
     @board[position1[0]][position1[1]] = 0 # old position
@@ -189,8 +194,31 @@ class Board
     #   - create a new rook in the move.new_position
     #   - clear the 2 squares between the King and the Rook
     # En Passant:
-    #   - sumn idk
+    #   - call move_piece( move.new_position, move.original_position ) to put the pawn back in it's original position
+    #   - set the square below the new_position to the piece (pawn) that was taken
 
+    #p move
+    puts "Move: from #{move.original_position}, to #{move.new_position}, piece: #{move.piece.color} #{move.piece.class.name}, type: #{move.type}, piece_taken: #{move.piece_taken}, promoted_to: #{move.promoted_to}"
+
+    if move.type == "Regular"
+      move_piece(convert_arrays_to_board(move.new_position), convert_arrays_to_board(move.original_position))
+      @board[move.new_position[0]][move.new_position[1]] = move.piece_taken if !move.piece_taken.nil?
+    elsif move.type == "En Passant"
+      # move pawn back to original position
+      move_piece(convert_arrays_to_board(move.new_position), convert_arrays_to_board(move.original_position))
+
+      # determine whether to put piece_taken to the left (<) or right (>)
+      # position[1] = column
+      if move.new_position[1] < move.original_position[1]
+        @board[move.original_position[0]][move.original_position[1] - 1] = move.piece_taken if !move.piece_taken.nil?
+        
+      elsif move.new_position[1] > move.original_position[1]
+        @board[move.original_position[0]][move.original_position[1] + 1] = move.piece_taken if !move.piece_taken.nil?
+
+      end
+    elsif move.type == "Kingside Castle"
+      
+    end
 
   end
 
