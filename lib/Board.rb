@@ -1,10 +1,13 @@
 require_relative './Piece.rb'
 require_relative './Converter.rb'
 require_relative './Move.rb'
+require_relative './DisplayBoard.rb'
+require 'time'
 require 'colorize'
 
 class Board
   include Converter
+  include DisplayBoard
   attr_accessor :board, :attacked_spaces
 
   def initialize(preset_board)
@@ -198,7 +201,7 @@ class Board
     #   - set the square below the new_position to the piece (pawn) that was taken
 
     #p move
-    puts "Move: from #{move.original_position}, to #{move.new_position}, piece: #{move.piece.color} #{move.piece.class.name}, type: #{move.type}, piece_taken: #{move.piece_taken}, promoted_to: #{move.promoted_to}"
+    #puts "Move: from #{move.original_position}, to #{move.new_position}, piece: #{move.piece.color} #{move.piece.class.name}, type: #{move.type}, piece_taken: #{move.piece_taken}, promoted_to: #{move.promoted_to}"
 
     if move.type == "Regular" || move.type == "2 Square Move"
       move_piece(convert_arrays_to_board(move.new_position), convert_arrays_to_board(move.original_position))
@@ -264,7 +267,6 @@ class Board
 
     self.update_castling
     self.update_en_passant(move_history)
-    self.filter_pseudo_moves
   end
 
   def test_check
@@ -320,11 +322,51 @@ class Board
     end
   end
 
-  def filter_pseudo_moves
+  def filter_pseudo_moves(move_history)
+    time1 = Time.now
     # get list of possible moves
-    # make each move,
-    # then check if the move would put the king in check
-    # if so,
+    # make each move, then
+    #   if the move would put the king in check,
+    #     then the move is illegal!
+    #     so remove it from the piece's possible_moves list
+    #   if the move would not put the king in check,
+    #     then the move is legal, leave it alone!
+    #   then unmake the move to reset the board to it's original state for the next move
+    #
+    # use an array to store the moves that need are illegal, then iterate through every piece and remove any moves that match
+
+    illegal_moves = []
+    piece_list = find_piece("Piece", :all)
+    p piece_list.map { |piece| piece.class.name }
+
+    piece_list.each do |piece|
+      piece.possible_moves.each do |move|
+        puts "Move | from: #{move.original_position}, to: #{move.new_position}, piece: #{move.piece.color} #{move.piece.class.name}, type: #{move.type}, promoted_to: #{move.promoted_to}, piece_taken: #{move.piece_taken}"
+
+        move_piece_on_board(move)
+        move_history << move
+        update_moves(move_history)
+        print_board_highlighted(@board)
+
+        check_status = test_check()
+        p "check_status: #{check_status}"
+        illegal_moves << move if check_status[piece.color]
+
+        unmake_move(move)
+        move_history.pop
+        update_moves(move_history)
+        print_board_highlighted(@board)
+      end
+    end
+
+    puts "illegal moves found: "
+    illegal_moves.each { |move| puts "Illegal Move | from: #{move.original_position}, to: #{move.new_position}, piece: #{move.piece.color} #{move.piece.class.name}, type: #{move.type}, promoted_to: #{move.promoted_to}, piece_taken: #{move.piece_taken}" }
+    piece_list.each do |piece|
+      piece.possible_moves.reject! { |move| illegal_moves.any? { |illegal_move| move.original_position == illegal_move.original_position && move.new_position == illegal_move.new_position }}
+    end
+
+    time2 = Time.now
+    puts "Time elapsed: #{time2-time1} seconds"
   end
 
   def is_checkmate?

@@ -22,15 +22,19 @@ class Game
     # Loop .round until checkmate or stalemate is declared
     40.times do
       current_round = round
-      break if current_round == "exit"
+      if current_round != false
+        p current_round
+        break
+      end
     end
 
-    print_board(@board.board)
+    print_board_highlighted(@board.board)
     puts "Game Over"
   end
 
   def round
     @board.update_moves(@move_history)
+    @board.filter_pseudo_moves(@move_history)
 
     check_status = @board.test_check
     checkmate_status = @board.is_checkmate?
@@ -69,9 +73,9 @@ class Game
       @board.move_piece_on_board(selected_move)
       @move_history << selected_move
 
-      print_board_highlighted(@board.board)
-      puts "Unmaking move"
-      @board.unmake_move(@move_history[-1])
+      #print_board_highlighted(@board.board)
+      #puts "Unmaking move"
+      #@board.unmake_move(@move_history[-1])
     else
 
       computers_move = @computer.get_random_move(@board.board)
@@ -81,5 +85,7 @@ class Game
     end
 
     @turn == @player ? @turn = @computer : @turn = @player
+
+    false
   end
 end
