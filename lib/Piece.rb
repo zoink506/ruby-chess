@@ -169,6 +169,7 @@ class King < Piece
         end
 
         # Queen side castle
+        # ITS LOOPING AROUND THE COLUMN ARRAY! BRUH!!
         rook = board.board[row][column - 4]
         
         if rook.class.name == "Rook" && !rook.has_moved && rook.color == @color

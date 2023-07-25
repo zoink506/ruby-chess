@@ -92,7 +92,9 @@ class Board
 
   # Move a piece from one spot to another
   # has no regard for whether the move is allowed, validation happens elsewhere
-  def move_piece(position1, position2)
+  def move_piece(position1, position2, hypothetical = false)
+    # hypothetical: if a piece is moved during move generation, then it hasn't actually moved,
+    #               therefore it's has_moved attribute should stay the same as it was.
     p position1
     p position2
 
@@ -107,10 +109,10 @@ class Board
     @board[position2[0]][position2[1]] = @board[position1[0]][position1[1]] # new position
     @board[position1[0]][position1[1]] = 0 # old position
     @board[position2[0]][position2[1]].position = position2
-    @board[position2[0]][position2[1]].has_moved = true
+    @board[position2[0]][position2[1]].has_moved = true if !hypothetical
   end
 
-  def move_piece_on_board(move)
+  def move_piece_on_board(move, hypothetical = false)
     # takes in a move object
     # moves piece according to move object's @new_position and @original_position attributes
     # first checks the type of move
@@ -127,7 +129,7 @@ class Board
       from = convert_arrays_to_board([row1, column1])
       to = convert_arrays_to_board([row2, column2])
 
-      move_piece(from, to)
+      move_piece(from, to, hypothetical)
       return move
 
     elsif move.type == "Kingside Castle"
@@ -138,8 +140,8 @@ class Board
       row = move.original_position[0]
       column = move.original_position[1]
       rook = @board[row][column + 3]
-      move_piece(convert_arrays_to_board(king.position), convert_arrays_to_board([row, column + 2]))
-      move_piece(convert_arrays_to_board(rook.position), convert_arrays_to_board([row, column + 1]))
+      move_piece(convert_arrays_to_board(king.position), convert_arrays_to_board([row, column + 2]), hypothetical)
+      move_piece(convert_arrays_to_board(rook.position), convert_arrays_to_board([row, column + 1]), hypothetical)
       king.can_castle = false
 
     elsif move.type == "Queenside Castle"
@@ -150,8 +152,8 @@ class Board
       row = move.original_position[0]
       column = move.original_position[1]
       rook = @board[row][column - 4]
-      move_piece(convert_arrays_to_board(king.position), convert_arrays_to_board([row, column - 2]))
-      move_piece(convert_arrays_to_board(rook.position), convert_arrays_to_board([row, column - 1]))
+      move_piece(convert_arrays_to_board(king.position), convert_arrays_to_board([row, column - 2]), hypothetical)
+      move_piece(convert_arrays_to_board(rook.position), convert_arrays_to_board([row, column - 1]), hypothetical)
       king.can_castle = false
 
     elsif move.type == "En Passant"
@@ -162,7 +164,7 @@ class Board
       row2 = move.new_position[0]
       column2 = move.new_position[1]
 
-      move_piece(convert_arrays_to_board(move.original_position), convert_arrays_to_board(move.new_position))
+      move_piece(convert_arrays_to_board(move.original_position), convert_arrays_to_board(move.new_position), hypothetical)
       @board[row1][column2] = 0
       move.piece.has_moved = true
 
@@ -204,11 +206,11 @@ class Board
     #puts "Move: from #{move.original_position}, to #{move.new_position}, piece: #{move.piece.color} #{move.piece.class.name}, type: #{move.type}, piece_taken: #{move.piece_taken}, promoted_to: #{move.promoted_to}"
 
     if move.type == "Regular" || move.type == "2 Square Move"
-      move_piece(convert_arrays_to_board(move.new_position), convert_arrays_to_board(move.original_position))
+      move_piece(convert_arrays_to_board(move.new_position), convert_arrays_to_board(move.original_position), true)
       @board[move.new_position[0]][move.new_position[1]] = move.piece_taken if !move.piece_taken.nil?
     elsif move.type == "En Passant"
       # move pawn back to original position
-      move_piece(convert_arrays_to_board(move.new_position), convert_arrays_to_board(move.original_position))
+      move_piece(convert_arrays_to_board(move.new_position), convert_arrays_to_board(move.original_position), true)
 
       # determine whether to put piece_taken to the left (<) or right (>)
       # position[1] = column
@@ -220,16 +222,16 @@ class Board
 
       end
     elsif move.type == "Kingside Castle"
-      move_piece(convert_arrays_to_board(move.new_position), convert_arrays_to_board(move.original_position))
+      move_piece(convert_arrays_to_board(move.new_position), convert_arrays_to_board(move.original_position), true)
       rook_pos = [ move.new_position[0], move.new_position[1] - 1 ]
       rook_desired_pos = [ move.new_position[0], move.new_position[1] + 1 ]
-      move_piece( convert_arrays_to_board(rook_pos), convert_arrays_to_board(rook_desired_pos) )
+      move_piece(convert_arrays_to_board(rook_pos), convert_arrays_to_board(rook_desired_pos), true)
 
     elsif move.type == "Queenside Castle"
-      move_piece(convert_arrays_to_board(move.new_position), convert_arrays_to_board(move.original_position))
+      move_piece(convert_arrays_to_board(move.new_position), convert_arrays_to_board(move.original_position), true)
       rook_pos = [ move.new_position[0], move.new_position[1] + 1 ]
       rook_desired_pos = [ move.new_position[0], move.new_position[1] - 2 ]
-      move_piece( convert_arrays_to_board(rook_pos), convert_arrays_to_board(rook_desired_pos) )
+      move_piece(convert_arrays_to_board(rook_pos), convert_arrays_to_board(rook_desired_pos), true)
     end
 
   end
@@ -343,7 +345,7 @@ class Board
       piece.possible_moves.each do |move|
         puts "Move | from: #{move.original_position}, to: #{move.new_position}, piece: #{move.piece.color} #{move.piece.class.name}, type: #{move.type}, promoted_to: #{move.promoted_to}, piece_taken: #{move.piece_taken}"
 
-        move_piece_on_board(move)
+        move_piece_on_board(move, true)
         move_history << move
         update_moves(move_history)
         print_board_highlighted(@board)
